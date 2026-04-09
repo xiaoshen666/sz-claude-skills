@@ -1,0 +1,311 @@
+{
+  "project_name": "项目名称",
+  "created_at": "2024-01-01T00:00:00Z",
+  "last_updated": "2024-01-01T00:00:00Z",
+  "current_phase": "需求分析设计",
+  "phases": {
+    "需求分析设计": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "review_status": "pending",
+      "reviewed_at": null,
+      "documents": [
+        {
+          "name": "需求概要文档.md",
+          "path": "01需求文档/{项目名称}需求概要文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "需求详细设计文档.md",
+          "path": "01需求文档/{项目名称}需求详细设计文档.md",
+          "status": "pending",
+          "last_checked": null
+        }
+      ]
+    },
+    "技术架构设计": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "review_status": "pending",
+      "reviewed_at": null,
+      "documents": [
+        {
+          "name": "前端技术架构设计文档.md",
+          "path": "02技术设计文档/{项目名称}前端技术架构设计文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "后端技术架构设计文档.md",
+          "path": "02技术设计文档/{项目名称}后端技术架构设计文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "整体技术架构设计文档.md",
+          "path": "02技术设计文档/{项目名称}整体技术架构设计文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "技术选型矩阵.md",
+          "path": "02技术设计文档/{项目名称}技术选型矩阵.md",
+          "status": "pending",
+          "last_checked": null
+        }
+      ]
+    },
+    "数据库和接口设计": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "review_status": "pending",
+      "reviewed_at": null,
+      "documents": [
+        {
+          "name": "数据库设计文档.md",
+          "path": "02技术设计文档/{项目名称}数据库设计文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "ER图文档.md",
+          "path": "02技术设计文档/{项目名称}ER图文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "SQL脚本.md",
+          "path": "02技术设计文档/{项目名称}SQL脚本.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "API接口文档.md",
+          "path": "02技术设计文档/{项目名称}API接口文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "容器化部署文档.md",
+          "path": "02技术设计文档/{项目名称}容器化部署文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "非容器化部署文档.md",
+          "path": "02技术设计文档/{项目名称}非容器化部署文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "运维文档.md",
+          "path": "02技术设计文档/{项目名称}运维文档.md",
+          "status": "pending",
+          "last_checked": null
+        }
+      ]
+    },
+    "UI原型设计": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "review_status": "pending",
+      "reviewed_at": null,
+      "documents": [
+        {
+          "name": "站点地图.md",
+          "path": "03原型/{项目名称}站点地图.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "页面流程图.md",
+          "path": "03原型/{项目名称}页面流程图.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "交互流程图.md",
+          "path": "03原型/{项目名称}交互流程图.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "交互规范.md",
+          "path": "03原型/{项目名称}交互规范.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "低保真原型.md",
+          "path": "03原型/{项目名称}低保真原型.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "高保真原型.md",
+          "path": "03原型/{项目名称}高保真原型.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "原型说明文档.md",
+          "path": "03原型/{项目名称}原型说明文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "设计规范.md",
+          "path": "03原型/{项目名称}设计规范.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "组件库文档.md",
+          "path": "03原型/{项目名称}组件库文档.md",
+          "status": "pending",
+          "last_checked": null
+        }
+      ]
+    },
+    "前端实现": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "review_status": "pending",
+      "reviewed_at": null,
+      "documents": [
+        {
+          "name": "前端项目配置文档.md",
+          "path": "04frontend/{项目名称}前端项目配置文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "组件文档.md",
+          "path": "04frontend/{项目名称}组件文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "页面文档.md",
+          "path": "04frontend/{项目名称}页面文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "工具文档.md",
+          "path": "04frontend/{项目名称}工具文档.md",
+          "status": "pending",
+          "last_checked": null
+        }
+      ]
+    },
+    "后端实现": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "review_status": "pending",
+      "reviewed_at": null,
+      "documents": [
+        {
+          "name": "后端项目配置文档.md",
+          "path": "05backend/{项目名称}后端项目配置文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "业务逻辑文档.md",
+          "path": "05backend/{项目名称}业务逻辑文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "API实现文档.md",
+          "path": "05backend/{项目名称}API实现文档.md",
+          "status": "pending",
+          "last_checked": null
+        }
+      ]
+    },
+    "集成部署": {
+      "status": "pending",
+      "started_at": null,
+      "completed_at": null,
+      "review_status": "pending",
+      "reviewed_at": null,
+      "documents": [
+        {
+          "name": "项目集成文档.md",
+          "path": "{项目名称}项目集成文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "本地开发环境搭建指南.md",
+          "path": "{项目名称}本地开发环境搭建指南.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "接口联调测试文档.md",
+          "path": "{项目名称}接口联调测试文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "容器化部署实施文档.md",
+          "path": "{项目名称}容器化部署实施文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "非容器化部署实施文档.md",
+          "path": "{项目名称}非容器化部署实施文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "部署流程文档.md",
+          "path": "{项目名称}部署流程文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "监控配置文档.md",
+          "path": "{项目名称}监控配置文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "维护指南文档.md",
+          "path": "{项目名称}维护指南文档.md",
+          "status": "pending",
+          "last_checked": null
+        },
+        {
+          "name": "安全运维文档.md",
+          "path": "{项目名称}安全运维文档.md",
+          "status": "pending",
+          "last_checked": null
+        }
+      ]
+    }
+  },
+  "workflow_history": [],
+  "status_definitions": {
+    "pending": "等待开始",
+    "in_progress": "进行中",
+    "completed": "已完成",
+    "completed_with_issues": "已完成但有遗留问题",
+    "failed": "失败",
+    "paused": "暂停",
+    "passed": "评审通过",
+    "passed_with_conditions": "有条件通过",
+    "failed": "评审未通过"
+  }
+}
