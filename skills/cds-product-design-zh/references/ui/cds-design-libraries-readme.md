@@ -48,19 +48,19 @@
 `TopNavigation` ⭐ `Sidebar` `Breadcrumb` `Card` ⭐ `Tabs` `Layout` `ColLayout`
 
 ### 表单组件类
-`FormInput` ⭐ `FormInputFilled` `FormTextarea` `FormSelect` ⭐ `ConditionSelect` `SearchInput` `Switch` `Checkbox` `RadioButton` `DatePicker` `FormMultiSelect` `TimePicker` `Slider` `FormTip`
+`CdsInput` ⭐ `CdsTextArea` `CdsSelect` ⭐ `CdsDatePicker` `CdsTimePicker` `CdsSwitch` `CdsCheckbox` `CdsRadio` `CdsNumberInput` `CdsColorPicker` `SearchWrap` `CdsQuickSearch` `CdsSignature` `FormTip`
 
 ### 按钮组件类
-`PrimaryButton` ⭐ `SecondaryButton` ⭐ `DangerButton` `TextButton` `TextButtonDanger` `IconButton` `ButtonGroup` `DropdownButton`
+`CdsButton` ⭐ `PrimaryButton` ⭐ `SecondaryButton` ⭐ `DangerButton` `TextButton` `IconButton` `ButtonGroup`
 
 ### 数据展示类
-`DataTable` ⭐ `Pagination` ⭐ `StatusTag` ⭐ `EmptyState` `StatisticCard` `Tag` `Progress`
+`CdsTable` ⭐ `Pagination` ⭐ `StatusTag` ⭐ `EmptyState` `CdsTree` `CdsImage` `StatisticCard` `Tag` `Progress`
 
 ### 反馈组件类
 `Toast` `Modal` ⭐ `Confirm` `Step` `Skeleton` `Loading` `Notification`
 
 ### 辅助组件类
-`Icon` `Divider` `Tooltip` `Upload` `Tree` `ApprovalLog`
+`Icon` `Divider` `Tooltip` `CdsWorkFlow` `CdsToolbar` `ApprovalLog` `CdsLabel` `MonacoEditor`
 
 > ⭐ 为 12 个核心组件，所有场景均需包含
 
@@ -77,10 +77,10 @@
 
 | 页面类型 | 推荐组件组合 |
 |----------|-------------|
-| **列表页** | TopNavigation + Card + SearchInput + DataTable + Pagination + StatusTag |
-| **详情页** | Breadcrumb + Card + StatisticCard + Tabs + ApprovalLog |
-| **表单页** | Card + FormInput + FormSelect + DatePicker + PrimaryButton + SecondaryButton |
-| **仪表盘** | TopNavigation + Sidebar + StatisticCard + Progress + DataTable + Tag |
+| **列表页** | TopNavigation + Card + SearchWrap + CdsTable + Pagination + StatusTag |
+| **详情页** | Breadcrumb + Card + StatisticCard + Tabs + CdsWorkFlow + ApprovalLog |
+| **表单页** | Card + CdsInput + CdsSelect + CdsDatePicker + CdsButton + CdsToolbar |
+| **仪表盘** | TopNavigation + Sidebar + StatisticCard + Progress + CdsTable + Tag |
 
 ---
 
@@ -95,3 +95,25 @@
 - 图标简洁线条风格，无填充
 - 搜索区与表格区之间有明确视觉分层
 - 操作按钮使用颜色语义区分：蓝色=常规操作，红色=危险操作
+
+## 5. CDS组件库技术说明
+
+### 组件导入方式
+```tsx
+import { CdsInput, CdsButton, CdsTable } from '@sup-lcdp/ui';
+```
+
+### 核心组件特性
+- **CdsInput**：支持文本、密码、搜索类型，内置校验状态
+- **CdsButton**：支持 primary、secondary、danger 等多种类型
+- **CdsTable**：支持分页、排序、筛选、行选择等高级功能
+- **CdsDatePicker/CdsTimePicker**：日期时间选择，支持范围选择
+- **CdsSelect**：支持下拉选择、多选、搜索过滤
+- **CdsWorkFlow**：工作流操作组件，支持委托、撤回、驳回、提交
+- **CdsToolbar**：表单工具栏，集成用户信息显示和操作按钮
+
+### 组件使用规范
+1. 表单组件必须配合 CdsLabel 使用，确保可访问性
+2. 表格组件必须配置合适的列宽和响应式断点
+3. 工作流组件需要配置对应的权限和状态
+4. 所有组件都支持 size 属性（small、default、large）

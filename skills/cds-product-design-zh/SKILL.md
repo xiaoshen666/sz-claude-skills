@@ -106,6 +106,13 @@ END IF
 | BACKEND-ARCH.md | 后端技术方案设计指南 |
 | TECH-SYNC.md | 技术方案调整与同步指南 |
 
+## 前端工具指南
+
+### 前端架构师工具文档
+| 文件 | 用途 | 使用场景 |
+|------|------|----------|
+| FRONTEND-TOOLS-PROJECT-STRUCT.md | 前端项目结构创建和模板使用指南 | 新建前端项目、理解项目结构时 |
+
 ## UI库默认配置
 
 ### CDS标准UI库文件
@@ -119,9 +126,63 @@ END IF
 3. 自动使用 `references/ui/cds-design-libraries-readme.md` 作为默认设计规范
 4. 确保新项目能快速使用CDS标准UI库进行原型设计
 
+## 前端架构师能力
+
+### 技术栈专长
+- **核心框架**：React 18.2.0, TypeScript 4.7.4, React Router 6.11.2
+- **UI组件库**：@sup-lcdp/ui 8.1.0-rc.25, Ant Design 5.5.2
+- **构建工具**：Webpack 5.74.0, Babel, ESLint
+- **工具库**：ahooks 3.7.7, axios 1.4.0, dayjs 1.11.7
+
+### 核心能力
+1. **CDS组件库精通**：熟练使用CdsInput、CdsButton、CdsTable等20+核心组件
+2. **项目架构设计**：基于cds-template脚手架的标准项目结构设计
+3. **路由配置**：React Router v6路由规范配置
+4. **状态管理**：React Hooks + ahooks的现代化状态管理
+5. **API集成**：基于@cds/utils/request的统一请求封装
+6. **国际化**：多语言支持方案设计
+7. **性能优化**：代码分割、懒加载、缓存策略
+
+### 产出规范
+- **技术方案文档**：包含技术选型、项目结构、组件设计、API规范等
+- **代码规范**：遵循ESLint + TypeScript严格模式
+- **文档格式**：{项目名称}-前端技术实现方案.md
+
+## 后端架构师能力
+
+### 技术栈专长
+- **核心框架**：Java JDK 1.8, Spring Boot 2.1.5.RELEASE
+- **ORM框架**：MyBatis 3.5.6, MyBatis-Plus 3.4.2
+- **微服务**：Spring Cloud Greenwich.SR1, OpenFeign
+- **数据库**：Oracle11g, MySQL, MariaDB, SQL Server, Kingbase
+- **连接池**：Druid
+- **构建工具**：Maven 3.x
+
+### 核心能力
+1. **CDS项目结构精通**：熟练掌握{moduleCode}-custom目录结构和命名规范
+2. **Entity设计**：基于AbstractConfigurationWorkflowEntity的实体类设计
+3. **DAO开发**：继承BaseDao的接口设计，支持基础增删改查
+4. **Service架构**：基于BaseService的业务服务设计
+5. **Controller开发**：RESTful API设计和InternalApi注解使用
+6. **数据库设计**：多数据库支持，表结构设计和SQL脚本
+7. **模块注册**：ModuleRegisterInitialize实现，自动注册模块
+8. **配置管理**：公共服务配置类和Mapper扫描配置
+
+### 产出规范
+- **技术方案文档**：包含技术选型、项目结构、数据库设计、API规范等
+- **代码规范**：遵循CDS命名规范，Entity继承工作流基类
+- **文档格式**：{项目名称}-后端技术实现方案.md
+
+### 简化开发模式
+- **基础增删改查**：提供save、info、delete三个核心API接口
+- **继承体系**：利用BaseDao和BaseService减少重复代码
+- **对象转换**：使用PojoUtil进行BO/VO/Entity之间的转换
+- **事务管理**：基于@Transactional的声明式事务控制
+
 ## 外部Skill调用
 
 | 场景 | 调用Skill | 说明 |
 |------|----------|------|
 | 设计检查验收 | cds-product-test-zh | 设计完成后调用 |
 | 技术方案评审 | cds-product-test-zh | 技术方案完成后调用 |
+| 前端代码实现 | sz-08frontend-architect | 技术方案完成后调用前端架构师进行代码生成 |

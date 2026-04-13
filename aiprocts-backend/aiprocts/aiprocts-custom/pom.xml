@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.supcon.nebule</groupId>
+        <artifactId>aiprocts</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>aiprocts-custom</artifactId>
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>aiprocts-custom-service</module>
+        <module>aiprocts-custom-manager</module>
+        <module>aiprocts-custom-api</module>
+        <module>aiprocts-custom-dao</module>
+        <module>aiprocts-custom-common</module>
+        <module>aiprocts-custom-webapi</module>
+        <module>aiprocts-custom-resource</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.supcon.nebule</groupId>
+                <artifactId>aiprocts-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.supcon.nebule</groupId>
+                <artifactId>aiprocts-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.supcon.nebule</groupId>
+                <artifactId>aiprocts-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.supcon.nebule</groupId>
+                <artifactId>aiprocts-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+</project>

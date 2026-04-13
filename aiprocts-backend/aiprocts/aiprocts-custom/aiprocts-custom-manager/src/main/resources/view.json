@@ -1,0 +1,22 @@
+{
+  "view": [
+    {
+      "code": "aiprocts_leave_add",
+      "viewCode": "leave_add",
+      "viewName": "请假单新增",
+      "viewUrl": "/nebule-custom-static/aiprocts/#/leave/add"
+    },
+    {
+      "code": "aiprocts_leave_edit",
+      "viewCode": "leave_edit",
+      "viewName": "请假单编辑",
+      "viewUrl": "/nebule-custom-static/aiprocts/#/leave/edit"
+    },
+    {
+      "code": "aiprocts_leave_list",
+      "viewCode": "leave_list",
+      "viewName": "请假单列表",
+      "viewUrl": "/nebule-custom-static/aiprocts/#/leave/list"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh-cn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+    <meta name="meta-theme-set" content="default" />
+    <title>H5 App</title>
+  <body>
+    <div id="root"></div>
+        <script>
+    window.modulePath = 'runtime-mobile';
+    </script>
+    <script th:src="@{/nebule-static/runtime-mobile/entry.js(__${T(java.lang.System).currentTimeMillis()}__)}"></script>
+</html>

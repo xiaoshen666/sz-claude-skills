@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration scan="true" scanPeriod="60" debug="false">
+    <springProperty scope="context" name="LOG_MAX_HISTORY" source="log.maxHistory" />
+    <conversionRule conversionWord="traceId" converterClass="com.supcon.nebule.framework.fulllink.tracking.converter.TraceIdConverter"/>
+    <conversionRule conversionWord="spanId" converterClass="com.supcon.nebule.framework.fulllink.tracking.converter.SpanIdConverter"/>
+    <conversionRule conversionWord="threadId" converterClass="com.supcon.nebule.framework.fulllink.tracking.converter.ThreadIdConverter"/>
+    <conversionRule conversionWord="traceMsg" converterClass="com.supcon.nebule.framework.fulllink.tracking.converter.TraceMsgConverter"/>
+    <conversionRule conversionWord="fromServiceName" converterClass="com.supcon.supfusion.framework.cloud.logger.converter.FromServiceNameConverter"/>
+    <property name="tracePattern" value='{"traceId": "%traceId", "spanId": "%spanId", "timestamp": "%d{yyyy-MM-dd HH:mm:ss.SSS}", "thread": "%thread", "threadId": "%threadId", "data": %traceMsg}%n'/>
+    <property name="logHome" value="${work.dir}"/>
+    <property name="pattern" value="[%d{ISO8601}][%-5level][APP:%t][%C:%M:%L]%traceId%fromServiceName, %msg%n"/>
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${pattern}</pattern>
+        </encoder>
+    </appender>
+    <appender name="traceFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logHome}/trace.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logHome}/trace.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>200MB</maxFileSize>
+            <totalSizeCap>2GB</totalSizeCap>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>${tracePattern}</pattern>
+        </encoder>
+    </appender>
+    <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${logHome}/aiproctsap.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${logHome}/aiproctsap.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxHistory>${LOG_MAX_HISTORY:-7}</maxHistory>
+            <maxFileSize>200MB</maxFileSize>
+            <totalSizeCap>2GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${pattern}</pattern>
+        </encoder>
+    </appender>
+        <appender name="SIFT_TASK" class="ch.qos.logback.classic.sift.SiftingAppender">
+            <discriminator>
+                <key>task-id</key>
+                <defaultValue>default</defaultValue>
+            </discriminator>
+            <sift>
+                <appender name="File-${task-info}" class="ch.qos.logback.core.FileAppender">
+                    <file>${logHome}/task/${task-id}.log</file>
+                    <append>true</append>
+                    <encoder charset="UTF-8">
+                        <pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %msg%n</pattern>
+                    </encoder>
+                </appender>
+            </sift>
+        </appender>
+        <!-- MyBatis的sql日志输出 -->
+        <logger name="com.supcon.*.mapper" level="DEBUG">
+            <appender-ref ref="traceFile"/>
+        </logger>
+        <!-- 调用链路日志输出 -->
+        <logger name="com.supcon.nebule.framework.fulllink.tracking" level="TRACE" additivity="false">
+            <appender-ref ref="traceFile"/>
+        </logger>
+        <!-- 服务controller、service自定义日志采集 -->
+        <logger name="com.supcon.*.controller" level="DEBUG">
+            <appender-ref ref="traceFile"/>
+        </logger>
+        <logger name="com.supcon.*.service" level="DEBUG">
+            <appender-ref ref="traceFile"/>
+        </logger>
+        <logger name="TASK" level="debug">
+            <appender-ref ref="SIFT_TASK"/>
+        </logger>
+    <root level="INFO">
+        <appender-ref ref="file"/>
+        <appender-ref ref="stdout"/>
+    </root>
+     <logger name="com.netflix" level="Error" />
+     <logger name="org.springframework" level="Error" />
+     <logger name="org.hibernate.validator" level="Error" />
+     <logger name="org.apache.ibatis" level="Error" />
+     <logger name="org.apache.http.impl.conn" level="Error" />
+     <logger name="springfox.documentation" level="Error" />
+     <logger name="com.baomidou.mybatisplus" level="Error" />
+     <logger name="io.fabric8.kubernetes" level="Error" />
+     <logger name="com.supcon.supfusion.framework.cloud.i18n" level="Error" />
+     <logger name="com.alibaba.nacos.client" level="Warn" />
+     <logger name="com.supcon.supfusion.framework.scaffold.dbp.factory.populator.version.VersionScriptUtils" level="Debug" />
+     <logger name="com.supcon.nebule.aiproctsap.Bootstrap" level="INFO" />
+</configuration>

@@ -41,7 +41,7 @@ END IF
 | 步骤 | 名称 | 详细指南 | 核心交付物 |
 |------|------|---------|-----------|
 | 0 | 开发环境初始化 | DEV-SETUP.md | dev-session.md、开发环境配置 |
-| 1 | 项目结构创建 | PROJECT-STRUCT.md | 项目目录结构、基础配置文件 |
+| 1 | 项目结构创建 | ../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md | 项目目录结构、基础配置文件 |
 | 2 | 开发环境配置 | DEV-ENV.md | 开发环境配置文档、依赖安装完成 |
 
 ### 第二阶段：模块开发
@@ -69,19 +69,61 @@ END IF
 3. **记录执行摘要**：记录关键决策、变更、用户确认
 4. **用户确认**：展示产物，获取用户确认后继续
 
+## 项目模板资源
+
+### CDS 前端模板
+- **模板位置**：`references/templates/cds-template/`
+- **模板来源**：基于 aiprocts-frontend 项目的标准开发脚手架
+- **使用场景**：新项目初始化时自动复制到工作空间
+- **模板特性**：
+  - 完整的 React + TypeScript 项目结构
+  - 预配置的 Webpack 构建环境
+  - @sup-lcdp/ui 组件库集成
+  - ESLint + Prettier 代码规范
+  - 开发环境代理配置
+
+### 模板使用规则
+1. **自动复制**：当项目目录不存在前端代码时，自动从模板复制
+2. **配置更新**：根据项目需求更新 package.json 和 .supconrc.js
+3. **依赖安装**：自动执行 yarn install 安装依赖
+4. **环境验证**：确保开发环境可以正常启动
+
 ## 详细指南索引
 
 | 文件 | 用途 |
 |------|------|
 | DEV-SETUP.md | 开发环境设置指南 |
-| PROJECT-STRUCT.md | 项目结构创建指南 |
 | DEV-ENV.md | 开发环境配置指南 |
 | MODULE-SETUP.md | 模块开发初始化指南 |
-| FRONTEND-IMPL.md | 前端代码实现指南 |
+| FRONTEND-IMPL.md | 前端代码实现指南（基于CDS模板） |
 | BACKEND-IMPL.md | 后端代码实现指南 |
 | STARTUP-CODE.md | 启动类代码生成指南 |
 | CODE-REVIEW.md | 代码审查指南 |
 | INTEGRATION.md | 集成测试指南 |
+
+## 开发者能力文档
+
+### 前端开发能力
+| 文件 | 用途 |
+|------|------|
+| FRONTEND-IMPL.md | 前端工程师角色实现指南，包含技术栈、开发规范、最佳实践 |
+
+### 后端开发能力  
+| 文件 | 用途 |
+|------|------|
+| BACKEND-IMPL.md | 后端工程师角色实现指南，包含技术栈、开发规范、最佳实践 |
+
+### 工具文档引用
+
+#### 后端开发工具指南
+| 工具文档 | 用途 | 使用场景 |
+|---------|------|----------|
+| [项目结构工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md) | CDS项目目录结构和模块划分 | 新建项目、理解项目结构时 |
+| [配置管理工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 | 配置类开发、包扫描配置时 |
+| [数据库规范工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md) | 数据库设计和SQL脚本规范 | 数据库设计、表结构创建时 |
+| [模块注册工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 模块注册、菜单注册、工作流注册 | 模块初始化、系统集成时 |
+
+> **说明**: 后端工具文档仍然保留在 cds-product-design-zh 中，因为架构师在设计阶段需要使用这些文档来制定技术方案。开发者能力文档（BACKEND-ENGINEER.md 和 FRONTEND-ENGINEER.md）已转移到 cds-product-develop-zh 中，供开发阶段使用。
 
 ## 外部Skill调用
 

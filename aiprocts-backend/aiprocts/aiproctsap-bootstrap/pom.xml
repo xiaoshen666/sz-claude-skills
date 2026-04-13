@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.supcon.nebule</groupId>
+        <artifactId>nebule-bom</artifactId>
+        <version>1.2.6.0.RELEASE</version>
+        <relativePath />
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>aiproctsap-bootstrap</artifactId>
+    <version>1.0.0.0</version>
+    <!-- ========================================================================= -->
+    <!-- dependencies -->
+    <!-- ========================================================================= -->
+    <dependencies>
+        <dependency>
+            <groupId>com.supcon.nebule</groupId>
+            <artifactId>nebule-framework-starter</artifactId>
+            <version>${nebule.framework.starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.supcon.nebule</groupId>
+            <artifactId>nebule-license-common</artifactId>
+            <version>${nebule-license-common.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.supcon.supfusion</groupId>
+            <artifactId>license-sdk</artifactId>
+            <version>1.0.2.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>com.supcon.nebule</groupId>
+            <artifactId>aiprocts-webapi</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.supcon.nebule</groupId>
+            <artifactId>aiprocts-custom-webapi</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <finalName>aiproctsap</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
