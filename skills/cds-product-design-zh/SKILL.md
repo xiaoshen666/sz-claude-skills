@@ -136,7 +136,7 @@ END IF
 
 ### 技术栈专长
 - **核心框架**：React 18.2.0, TypeScript 4.7.4, React Router 6.11.2
-- **UI组件库**：@sup-lcdp/ui 8.1.0-rc.25, Ant Design 5.5.2
+- **UI组件库**：Ant Design 5.5.2
 - **构建工具**：Webpack 5.74.0, Babel, ESLint
 - **工具库**：ahooks 3.7.7, axios 1.4.0, dayjs 1.11.7
 
