@@ -4,12 +4,14 @@
 
 本指南详细说明了 CDS 后端项目的标准目录结构和模块划分，帮助后端工程师快速理解和构建符合 CDS 规范的项目结构。
 
+> **📌 重要**：关于 `{appCode}` 的获取来源与确认规则，请参考 [启动引导模块工具指南](BACKEND-TOOLS-BOOTSTRAP.md) 中的 **appCode 获取来源与确认规则** 章节。
+
 ## CDS 标准目录结构
 
 ### 整体项目结构
 
 ```
-{moduleCode}-V1.0.0/
+{moduleCode}-xxx/
 ├── {moduleCode}/
 │   ├── {moduleCode}-api/                    # 平台生成的API接口
 │   ├── {moduleCode}-common/                 # 平台生成的公共类
@@ -51,6 +53,16 @@
 | `nb_flow_{moduleCode}_com.supcon.icds.data` | CDS平台配置的SupOS工作流数据 | ❌ 禁止修改 |
 | `menu.json` | CDS平台配置的菜单信息 | ❌ 禁止修改 |
 | `systemCode.json` | CDS平台配置的系统编码 | ❌ 禁止修改 |
+
+### 关键字段提取要求
+
+在进行后端架构设计、代码生成、目录命名和建表设计时，应**优先从当前项目的 metadata 文件提取** `moduleCode` 与 `acronym`。
+
+- 优先读取：`{moduleCode}.json`
+- 重点提取字段：`module.moduleCode`、`module.acronym`
+- 若成功提取，也必须先向用户确认提取结果是否正确，确认无误后才能继续
+- 若未提取到这两个字段，或用户确认提取值不正确，必须先向用户询问并获取正确值后再继续
+- 后续所有代码命名、目录命名、SQL 建表前缀都必须使用用户最终确认后的值
 
 **{moduleCode}.json 关键字段说明**:
 ```json
@@ -223,27 +235,30 @@ com.supcon.nebule.{moduleCode}.custom/
 
 **路径**: `{appCode}-bootstrap/`
 
-**启动类**:
-```java
-@SpringBootApplication(scanBasePackages={
-    "com.supcon.nebule.{appCode}",
-    "com.supcon.nebule.framework.starter",
-    "com.supcon.nebule.api.workflow",
-    "com.supcon.nebule.{moduleCode}"
-})
-@MapperScan({
-    "com.supcon.nebule.{moduleCode}.dao",
-    "com.supcon.nebule.{moduleCode}.custom.dao"
-})
-@EnableScheduling
-@EnableFeignClients({...})
-public class Bootstrap {
-    public static void main(String[] args) {
-        ApusicEnvUtil.initBeforeStart();
-        SpringApplication.run(Bootstrap.class, args);
-    }
-}
+启动引导模块是 CDS 后端应用的入口模块，负责应用启动、健康检查和基础配置。详细说明和标准模板请参考：
+
+👉 **[启动引导模块工具指南](BACKEND-TOOLS-BOOTSTRAP.md)**
+
+### 目录结构概览
+
 ```
+{appCode}-bootstrap/
+├── src/main/java/com/supcon/nebule/{appCode}/
+│   ├── Bootstrap.java                # Spring Boot 启动类
+│   └── {appCode}HealthController.java  # 健康检查控制器
+├── src/main/resources/
+│   ├── bootstrap.properties          # 引导配置文件
+│   └── logback-spring.xml            # 日志配置
+└── pom.xml                           # Maven 依赖配置
+```
+
+### 核心组件说明
+
+| 组件 | 职责 |
+|------|------|
+| `Bootstrap.java` | Spring Boot 启动类，配置包扫描、Mapper 扫描、Feign 客户端 |
+| `{appCode}HealthController.java` | Kubernetes 健康检查接口 `/{appCode}/health` |
+| `bootstrap.properties` | Nacos 配置中心、模块编码、MyBatis Mapper 路径等核心配置 |
 
 ## 前端编译之后页面资源目录规范
 

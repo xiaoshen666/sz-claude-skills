@@ -1,5 +1,5 @@
 name:cds-product-develop-zh
-description:CDS产品开发助手，依据已有的UI稿和前端技术实现方案生成前端代码，依据已有的后端技术实现方案实现后端代码，生成启动类代码，包含git提交管理方便回退代码，前后端代码审查能力。
+description:CDS产品开发助手，依据已有的UI稿和前端技术实现方案生成前端代码，依据已有的后端技术实现方案实现后端代码，生成启动类代码，包含git提交管理方便回退代码与模块集成能力。
 
 ## 启动恢复流程（最高优先级）
 
@@ -31,7 +31,7 @@ END IF
 ## 开发流程框架
 
 ### 核心原则
-- **代码质量原则**：所有代码必须经过review才能提交
+- **代码质量原则**：所有代码在进入集成前必须完成必要的质量检查
 - **git管理原则**：每个功能点独立提交，便于回退
 - **前后端分离原则**：前端后端独立开发，最后集成
 - **产物导向原则**：每步只关注当前步骤的交付物
@@ -50,11 +50,9 @@ END IF
 |------|------|---------|-----------|
 | 0 | 模块开发初始化 | MODULE-SETUP.md | 模块开发目录、dev-task.md |
 | 1 | 前端代码生成 | FRONTEND-IMPL.md | 前端组件代码、前端服务代码、前端路由配置 |
-| 2 | 前端代码审查 | CODE-REVIEW.md | 前端代码审查报告、git提交记录 |
-| 3 | 后端代码生成 | BACKEND-IMPL.md | 后端控制器代码、后端服务代码、后端数据访问代码 |
-| 4 | 后端代码审查 | CODE-REVIEW.md | 后端代码审查报告、git提交记录 |
-| 5 | 启动类代码生成 | STARTUP-CODE.md | 应用启动类、配置文件、依赖注入配置 |
-| 6 | 模块集成测试 | INTEGRATION.md | 集成测试报告、模块开发完成确认 |
+| 2 | 后端代码生成 | BACKEND-IMPL.md | 后端控制器代码、后端服务代码、后端数据访问代码 |
+| 3 | 启动类代码生成（按需确认） | STARTUP-CODE.md | 按需生成应用启动类、配置文件、依赖注入配置 |
+| 4 | 模块集成测试 | INTEGRATION.md | 集成测试报告、模块开发完成确认 |
 
 ## 步骤执行规范
 
@@ -62,6 +60,13 @@ END IF
 1. **清理上下文**：移除与当前步骤无关的历史对话
 2. **加载指南**：读取对应的 reference 文件
 3. **确认前置产物**：检查前置步骤的交付物是否存在
+4. **前序设计产物确认**：若当前步骤涉及前端或后端代码生成，必须优先查找对应前序设计产物；前端优先查找 `.pen` 文件、`UI设计规范.md`、`{功能名称}-前端架构设计.md`、`{功能名称}-需求详细设计.md`，后端优先查找 `{功能名称}-需求详细设计.md`、`{功能名称}-后端架构设计.md`、`{功能名称}-API设计文档.md`；若文档不完整，至少确认存在一个 `{功能名称}-需求详细设计.md`，并先询问用户是否允许基于现有资料合理发挥
+5. **关键标识确认**：若当前步骤涉及后端代码生成、后端建表、类命名或注解参数，必须优先从后端技术实现方案文档读取 `moduleCode` 与 `acronym`；若文档缺失这两个值，则转为从当前项目 metadata 文件提取；无论从文档还是 metadata 读取到，都必须先向用户确认是否正确，若不正确或未提取到，则要求用户明确提供这两个值后再继续
+6. **启动类生成按需确认**：当执行“启动类代码生成”步骤前，必须先分开询问用户以下功能项各自是否需要生成，不得打包成一个笼统问题默认生成：
+   - 应用启动类是否需要？
+   - 配置文件是否需要？
+   - 依赖注入配置是否需要？
+   用户可以选择其中任意一项、多项，或明确说明这三项都不需要；只有在用户确认需要的前提下，才生成对应内容
 
 ### 每个步骤执行后
 1. **更新进度文件**：立即更新 dev-session.md 或 dev-task.md
@@ -95,10 +100,9 @@ END IF
 | DEV-SETUP.md | 开发环境设置指南 |
 | DEV-ENV.md | 开发环境配置指南 |
 | MODULE-SETUP.md | 模块开发初始化指南 |
-| FRONTEND-IMPL.md | 前端代码实现指南（基于CDS模板） |
-| BACKEND-IMPL.md | 后端代码实现指南 |
+| FRONTEND-IMPL.md | 前端代码实现指南（基于CDS模板），包含前序设计产物检查与自由发挥确认流程 |
+| BACKEND-IMPL.md | 后端工程师角色实现指南，包含技术栈、开发规范、最佳实践，以及 `moduleCode` / `acronym` 的文档读取、metadata 提取、前序设计产物检查与用户确认流程 |
 | STARTUP-CODE.md | 启动类代码生成指南 |
-| CODE-REVIEW.md | 代码审查指南 |
 | INTEGRATION.md | 集成测试指南 |
 
 ## 开发者能力文档
@@ -106,12 +110,12 @@ END IF
 ### 前端开发能力
 | 文件 | 用途 |
 |------|------|
-| FRONTEND-IMPL.md | 前端工程师角色实现指南，包含技术栈、开发规范、最佳实践 |
+| FRONTEND-IMPL.md | 前端工程师角色实现指南，包含技术栈、开发规范、最佳实践，以及前序设计产物检查与自由发挥确认流程 |
 
 ### 后端开发能力  
 | 文件 | 用途 |
 |------|------|
-| BACKEND-IMPL.md | 后端工程师角色实现指南，包含技术栈、开发规范、最佳实践 |
+| BACKEND-IMPL.md | 后端工程师角色实现指南，包含技术栈、开发规范、最佳实践，以及 `moduleCode` / `acronym` 的文档读取、metadata 提取、前序设计产物检查与用户确认流程 |
 
 ### 工具文档引用
 
@@ -119,11 +123,12 @@ END IF
 | 工具文档 | 用途 | 使用场景 |
 |---------|------|----------|
 | [项目结构工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md) | CDS项目目录结构和模块划分 | 新建项目、理解项目结构时 |
+| [后端业务代码生成工具指南](references/BACKEND-TOOLS-CODE-GENERATION.md) | Entity / BO / VO / DAO / Mapper / Service / Controller 业务代码模板 | 后端业务逻辑代码生成时 |
 | [配置管理工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 | 配置类开发、包扫描配置时 |
 | [数据库规范工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md) | 数据库设计和SQL脚本规范 | 数据库设计、表结构创建时 |
 | [模块注册工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 模块注册、菜单注册、工作流注册 | 模块初始化、系统集成时 |
 
-> **说明**: 后端工具文档仍然保留在 cds-product-design-zh 中，因为架构师在设计阶段需要使用这些文档来制定技术方案。开发者能力文档（BACKEND-ENGINEER.md 和 FRONTEND-ENGINEER.md）已转移到 cds-product-develop-zh 中，供开发阶段使用。
+> **说明**: 后端业务代码模板已从实现指南中抽离到 `cds-product-develop-zh/references/BACKEND-TOOLS-CODE-GENERATION.md`，供开发阶段直接引用。模块注册、菜单注册、工作流注册等设计仍然保留在 `cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md` 中，供需要注册代码时引用。
 
 ## 外部Skill调用
 
