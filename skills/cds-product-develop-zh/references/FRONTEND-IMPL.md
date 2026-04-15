@@ -1,8 +1,8 @@
-# 前端代码生成指南
+# 前端代码实现指南
 
 ## 角色定位
 
-你是一位专业的 CDS 前端开发工程师，负责根据前端技术方案实现具体的 React + TypeScript 前端代码。你精通 CDS 框架、React Hooks、TypeScript 等技术栈，能够高效地开发企业级前端应用。
+你是一位专业的前端开发工程师，负责根据前端技术方案实现具体的 React + TypeScript 前端代码。你精通 React Hooks、TypeScript、Ant Design 等技术栈，能够高效地开发企业级前端应用。
 
 ## 核心技术能力
 
@@ -10,17 +10,23 @@
 - **React 18.2.0**：熟练使用函数组件和 Hooks
 - **TypeScript 4.7.4**：严格的类型定义和接口设计
 - **React Router 6.11.2**：路由配置和导航管理
-- **@sup-lcdp/ui 8.1.0-rc.25**：CDS 标准组件库
+- **antd 5.5.2**：Ant Design 组件库
 - **ahooks 3.7.7**：React Hooks 工具库
 - **axios 1.4.0**：HTTP 请求处理
 
-### CDS 框架专精
-- **项目结构**：基于 cds-template 的标准目录结构
-- **组件库**：熟练使用 CdsInput、CdsButton、CdsTable 等核心组件
-- **状态管理**：React Hooks + ahooks 的状态管理方案
-- **API 集成**：基于 @cds/utils/request 的统一请求封装
-- **接口路由对齐**：前端请求 URL 设计必须对齐 [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)，实际调用统一使用 `/msService` + 后端接口路径
-- **国际化**：多语言支持实现
+### {moduleCode} 获取来源与确认规则
+
+在进行前端代码生成之前，**必须优先从当前项目中提取 `moduleCode`**，不得直接猜测或沿用历史上下文中的旧值。
+
+> **详细提取规则、执行流程和确认话术请参考**: [前端项目结构与代码规范工具指南 - moduleCode 获取规则](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#modulecode-获取来源与确认规则)
+
+### 前端架构规范
+
+> **详细前端架构设计请参考**: [前端技术方案设计指南](../../cds-product-design-zh/references/FRONTEND-ARCH.md)
+> 
+> **详细项目结构、代码示例和开发规范请参考**: [前端项目结构与代码规范工具指南](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md)
+>
+> 本指南专注于代码实现层面，项目结构、组件库使用、状态管理方案、数据请求规范、样式规范、国际化规范等请参考上述文档。
 
 ## 前序设计产物检查规则
 
@@ -71,12 +77,16 @@
 
 ## 开发规范
 
+> **完整代码示例和开发规范请参考**: [前端项目结构与代码规范工具指南](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md)
+
 ### 组件开发规范
 
 #### 函数组件模板
+
 ```tsx
 import React from 'react';
-import { CdsButton, CdsInput } from '@sup-lcdp/ui';
+import { Button, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import styles from './index.module.less';
 
 interface Props {
@@ -87,9 +97,10 @@ interface Props {
 const ComponentName: React.FC<Props> = ({ title, onSubmit }) => {
   return (
     <div className={styles.container}>
-      <CdsButton type="primary" onClick={onSubmit}>
-        {title || '默认标题'}
-      </CdsButton>
+      <Input placeholder="请输入内容" />
+      <Button type="primary" icon={<SearchOutlined />} onClick={onSubmit}>
+        {title || '查询'}
+      </Button>
     </div>
   );
 };
@@ -97,28 +108,32 @@ const ComponentName: React.FC<Props> = ({ title, onSubmit }) => {
 export default ComponentName;
 ```
 
-#### 自定义 Hook 模板
-```tsx
-import { useState, useCallback } from 'react';
-import { useRequest } from '@cds/utils/request';
+> **更多组件模板请参考**: [项目结构工具文档 - 组件开发模板](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#4-组件开发模板)
 
-interface UseCustomHookReturn {
-  data: any;
+#### 自定义 Hook 模板
+
+```tsx
+import { useRequest } from 'ahooks';
+import { userApi } from '@src/api/modules/user';
+
+interface UseUserListReturn {
+  data: any[];
   loading: boolean;
   refresh: () => void;
 }
 
-export const useCustomHook = (params: any): UseCustomHookReturn => {
-  const [data, setData] = useState(null);
-  
-  const refresh = useCallback(() => {
-    // 刷新逻辑
-  }, [params]);
+export const useUserList = (params: any): UseUserListReturn => {
+  const { data, loading, refresh } = useRequest(
+    () => userApi.getList(params),
+    {
+      refreshDeps: [params],
+    }
+  );
 
   return {
-    data,
-    loading: false,
-    refresh
+    data: data || [],
+    loading,
+    refresh,
   };
 };
 ```
@@ -127,161 +142,150 @@ export const useCustomHook = (params: any): UseCustomHookReturn => {
 
 > **详细接口 URL 与前端调用规则请参考**: [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
 >
+> **完整 axios 封装和 API 模块定义请参考**: [项目结构工具文档 - 数据请求规范](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#1-axios-封装)
+>
 > 前端服务层封装必须遵循以下规则：
 > - 需要权限控制的接口：前端调用地址使用 `/msService/{moduleCode}/...`
 > - 不需要权限控制的接口：前端调用地址使用 `/msService/public/{moduleCode}/...`
 > - 不得继续使用 `/inter-api/...` 这类历史路径示例
 
-#### 服务层封装
-```typescript
-// src/services/user.ts
-import { request } from '@cds/utils/request';
+#### 服务层封装示例
 
-export const userApiService = {
-  // 获取用户列表
-  getUserList: (params: { page: number; size: number }) => 
-    request({
-      url: '/msService/{moduleCode}/user/list',
-      method: 'GET',
-      params,
-    }),
+```ts
+// src/api/modules/user.ts
+import request from '../request';
 
-  // 创建用户
-  createUser: (data: any) => 
-    request({
-      url: '/msService/{moduleCode}/user/create',
-      method: 'POST',
-      data,
-    }),
+export interface UserParams {
+  page: number;
+  size: number;
+  keyword?: string;
+}
 
-  // 更新用户
-  updateUser: (id: number, data: any) => 
-    request({
-      url: `/msService/{moduleCode}/user/update/${id}`,
-      method: 'PUT',
-      data,
-    }),
+export interface UserInfo {
+  id: number;
+  name: string;
+  age: number;
+}
 
-  // 删除用户
-  deleteUser: (id: number) => 
-    request({
-      url: `/msService/{moduleCode}/user/delete/${id}`,
-      method: 'DELETE',
-    }),
+export const userApi = {
+  getList: (params: UserParams) =>
+    request.get<any, UserInfo[]>('/{moduleCode}/user/list', { params }),
+
+  create: (data: Partial<UserInfo>) =>
+    request.post<any, number>('/{moduleCode}/user/create', data),
+
+  update: (id: number, data: Partial<UserInfo>) =>
+    request.put<any, boolean>(`/{moduleCode}/user/${id}`, data),
+
+  delete: (id: number) =>
+    request.delete<any, boolean>(`/{moduleCode}/user/${id}`),
 };
 ```
 
 #### 组件内使用
-```tsx
-import { useRequest } from '@cds/utils/request';
-import { userApiService } from '@/services/user';
 
-const UserList: React.FC = () => {
+```tsx
+import { useState } from 'react';
+import { Table, Button } from 'antd';
+import { useRequest } from 'ahooks';
+import { userApi, UserInfo } from '@src/api/modules/user';
+
+export default function UserList() {
+  const [params, setParams] = useState({ page: 1, size: 10 });
+
   const { data, loading, refresh } = useRequest(
-    () => userApiService.getUserList({ page: 1, size: 10 })
+    () => userApi.getList(params),
+    {
+      refreshDeps: [params],
+    }
   );
+
+  const columns = [
+    { title: '姓名', dataIndex: 'name' },
+    { title: '年龄', dataIndex: 'age' },
+  ];
 
   return (
-    <CdsTable
-      loading={loading}
-      dataSource={data?.list || []}
-      columns={[
-        { title: '姓名', dataIndex: 'name' },
-        { title: '编码', dataIndex: 'code' },
-        { title: '状态', dataIndex: 'status' },
-      ]}
-    />
+    <div>
+      <Button onClick={refresh}>刷新</Button>
+      <Table
+        loading={loading}
+        dataSource={data}
+        columns={columns}
+        rowKey="id"
+      />
+    </div>
   );
-};
+}
 ```
 
 ### 页面开发规范
 
-#### 页面结构
+#### 页面结构示例
+
+> **完整页面开发规范请参考**: [项目结构工具文档 - 页面组件示例](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#5-页面组件示例)
+
 ```tsx
-// src/pages/User/index.tsx
-import React, { useState } from 'react';
-import { CdsTable, CdsButton, CdsModal, CdsForm } from '@sup-lcdp/ui';
-import { userApiService } from '@/services/user';
-import { useRequest } from '@cds/utils/request';
-import useIntl from '@cds/hooks/useIntl';
+// src/pages/User/List.tsx
+import { useState } from 'react';
+import { Table, Button, Modal } from 'antd';
+import { useRequest } from 'ahooks';
+import { userApi, UserInfo } from '@src/api/modules/user';
 
-const UserPage: React.FC = () => {
-  const intl = useIntl();
+export default function UserList() {
+  const [params, setParams] = useState({ page: 1, size: 10 });
   const [modalVisible, setModalVisible] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
 
-  // 获取用户列表
-  const { data: userList, loading, refresh } = useRequest(
-    () => userApiService.getUserList({ page: 1, size: 20 })
+  const { data, loading, refresh } = useRequest(
+    () => userApi.getList(params),
+    {
+      refreshDeps: [params],
+    }
   );
 
-  // 处理编辑
-  const handleEdit = (record: any) => {
-    setEditingUser(record);
-    setModalVisible(true);
-  };
-
-  // 处理删除
-  const handleDelete = async (id: number) => {
-    await userApiService.deleteUser(id);
-    refresh();
-  };
+  const columns = [
+    { title: '姓名', dataIndex: 'name' },
+    { title: '年龄', dataIndex: 'age' },
+    {
+      title: '操作',
+      render: (_, record) => (
+        <>
+          <Button onClick={() => setModalVisible(true)}>编辑</Button>
+          <Button danger onClick={() => userApi.delete(record.id).then(refresh)}>
+            删除
+          </Button>
+        </>
+      ),
+    },
+  ];
 
   return (
-    <div className="page-container">
-      <div className="page-header">
-        <CdsButton 
-          type="primary" 
-          onClick={() => setModalVisible(true)}
-        >
-          {intl('user.add')}
-        </CdsButton>
-      </div>
-
-      <CdsTable
+    <div>
+      <Button type="primary" onClick={() => setModalVisible(true)}>新增</Button>
+      <Table
         loading={loading}
-        dataSource={userList?.list || []}
-        columns={[
-          { title: intl('user.name'), dataIndex: 'name' },
-          { title: intl('user.code'), dataIndex: 'code' },
-          { title: intl('user.status'), dataIndex: 'status' },
-          {
-            title: intl('user.operation'),
-            render: (_, record) => (
-              <>
-                <CdsButton onClick={() => handleEdit(record)}>
-                  {intl('user.edit')}
-                </CdsButton>
-                <CdsButton 
-                  danger 
-                  onClick={() => handleDelete(record.id)}
-                >
-                  {intl('user.delete')}
-                </CdsButton>
-              </>
-            ),
-          },
-        ]}
+        dataSource={data}
+        columns={columns}
+        rowKey="id"
       />
-
-      <CdsModal
-        visible={modalVisible}
-        title={editingUser ? intl('user.edit') : intl('user.add')}
+      <Modal
+        open={modalVisible}
+        title="编辑用户"
         onCancel={() => setModalVisible(false)}
       >
         {/* 表单内容 */}
-      </CdsModal>
+      </Modal>
     </div>
   );
-};
-
-export default UserPage;
+}
 ```
 
 ### 样式开发规范
 
+> **完整样式规范请参考**: [项目结构工具文档 - 样式规范](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#7-样式规范css-modules)
+
 #### CSS Modules 使用
+
 ```less
 // src/pages/User/index.module.less
 .container {
@@ -294,60 +298,28 @@ export default UserPage;
   justify-content: space-between;
   align-items: center;
 }
-
-.table {
-  background: #fff;
-  border-radius: 4px;
-}
 ```
 
 #### 全局样式
-```less
-// index.less
-.page-container {
-  padding: 16px;
-  background: #f0f2f5;
-  min-height: 100vh;
-}
 
-.page-header {
-  margin-bottom: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-```
+- 全局样式定义在 `src/assets/styles/global.less`
+- 使用 BEM 命名规范
 
 ### 国际化开发规范
 
-#### 资源文件
-```typescript
-// src/locales/zh-CN.ts
-export default {
-  user: {
-    title: '用户管理',
-    name: '姓名',
-    code: '编码',
-    status: '状态',
-    operation: '操作',
-    add: '新增用户',
-    edit: '编辑用户',
-    delete: '删除用户',
-  },
-};
-```
+> **完整国际化配置请参考**: [项目结构工具文档 - 国际化配置](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#8-国际化配置)
 
-#### 使用方式
+#### 使用 react-intl
+
 ```tsx
-import useIntl from '@cds/hooks/useIntl';
+import { useIntl } from 'react-intl';
 
 const Component: React.FC = () => {
   const intl = useIntl();
   
   return (
     <div>
-      <h1>{intl('user.title')}</h1>
-      <p>{intl('welcome', { name: '用户' })}</p>
+      <h1>{intl.formatMessage({ id: 'user.title' })}</h1>
     </div>
   );
 };
@@ -443,13 +415,8 @@ yarn test
 
 在开始前端代码生成前，确保以下条件已满足：
 
-## 前置条件检查
-
-在开始前端代码生成前，确保以下条件已满足：
-
 1. **项目结构已创建**：
    - ✅ `src/frontend/` 目录已存在
-   - ✅ cds-template 模板已成功复制
    - ✅ 基础配置文件已正确设置
 
 2. **前序设计产物已检查**：
@@ -483,14 +450,16 @@ yarn test
 
 ## 页面组件生成
 
+> **完整页面组件生成规范请参考**: [项目结构工具文档 - 页面组件示例](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#5-页面组件示例)
+
 ### 页面组件结构
 
 ```tsx
-// src/frontend/src/pages/{模块名}/{页面名}.tsx
-import React, { useState, useEffect } from 'react';
-import { CdsButton, CdsTable, CdsInput } from '@sup-lcdp/ui';
-import { useRequest } from '@cds/utils/request';
-import { {模块名}Service } from '@src/services/{模块名}';
+// src/pages/{模块名}/{页面名}.tsx
+import React, { useState } from 'react';
+import { Table, Button, Input } from 'antd';
+import { useRequest } from 'ahooks';
+import { {模块名}Api } from '@src/api/modules/{模块名}';
 import styles from './index.module.less';
 
 interface {页面名}Props {
@@ -498,34 +467,35 @@ interface {页面名}Props {
 }
 
 export default function {页面名}(props: {页面名}Props) {
-  // 状态定义
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [params, setParams] = useState({ page: 1, size: 10 });
 
-  // 数据请求
-  const { data: listData, loading: listLoading } = useRequest(
-    () => {模块名}Service.getList()
+  const { data, loading, refresh } = useRequest(
+    () => {模块名}Api.getList(params),
+    {
+      refreshDeps: [params],
+    }
   );
 
-  // 生命周期
-  useEffect(() => {
-    if (listData) {
-      setData(listData);
-    }
-  }, [listData]);
-
-  // 事件处理
-  const handleSearch = () => {
-    // 搜索逻辑
-  };
-
-  const handleAdd = () => {
-    // 新增逻辑
-  };
+  const columns = [
+    { title: '名称', dataIndex: 'name' },
+    {
+      title: '操作',
+      render: (_, record) => (
+        <Button onClick={() => {/* 编辑逻辑 */}}>编辑</Button>
+      ),
+    },
+  ];
 
   return (
     <div className={styles.container}>
-      {/* 页面内容 */}
+      <Input placeholder="搜索" />
+      <Button type="primary" onClick={refresh}>查询</Button>
+      <Table
+        loading={loading}
+        dataSource={data}
+        columns={columns}
+        rowKey="id"
+      />
     </div>
   );
 }
@@ -533,43 +503,38 @@ export default function {页面名}(props: {页面名}Props) {
 
 ### 页面路由配置
 
-```tsx
-// src/frontend/src/routes/index.tsx
-import { SuspenseComponent } from '@cds/utils/Suspense';
-import React, { lazy } from 'react';
+> **完整路由配置规范请参考**: [项目结构工具文档 - 路由配置](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#3-路由配置)
 
-export default [
+```tsx
+// src/routes/index.tsx
+import { lazy, Suspense } from 'react';
+import { RouteObject } from 'react-router-dom';
+
+const UserList = lazy(() => import('@src/pages/User/List'));
+
+export const routes: RouteObject[] = [
   {
     path: '/{模块名}/list',
-    Component: SuspenseComponent(lazy(() => import('@src/pages/{模块名}/List'))),
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <UserList />
+      </Suspense>
+    ),
     title: '{功能模块}列表',
-  },
-  {
-    path: '/{模块名}/add',
-    Component: SuspenseComponent(lazy(() => import('@src/pages/{模块名}/Add'))),
-    title: '新增{功能模块}',
-  },
-  {
-    path: '/{模块名}/edit/:id',
-    Component: SuspenseComponent(lazy(() => import('@src/pages/{模块名}/Edit'))),
-    title: '编辑{功能模块}',
-  },
-  {
-    path: '/{模块名}/detail/:id',
-    Component: SuspenseComponent(lazy(() => import('@src/pages/{模块名}/Detail'))),
-    title: '{功能模块}详情',
   },
 ];
 ```
 
 ## 业务组件生成
 
+> **完整业务组件生成规范请参考**: [项目结构工具文档 - 组件开发模板](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#4-组件开发模板)
+
 ### 通用业务组件
 
 ```tsx
-// src/frontend/src/components/{组件名}/index.tsx
+// src/components/{组件名}/index.tsx
 import React from 'react';
-import { CdsButton, CdsTable } from '@sup-lcdp/ui';
+import { Table, Button } from 'antd';
 import styles from './index.module.less';
 
 interface {组件名}Props {
@@ -592,26 +557,22 @@ export default function {组件名}({
     {
       title: '操作',
       key: 'action',
-      render: (text: any, record: any) => (
-        <CdsButton type="text" onClick={() => handleEdit(record)}>
+      render: (_: any, record: any) => (
+        <Button type="link" onClick={() => {/* 编辑逻辑 */}}>
           编辑
-        </CdsButton>
+        </Button>
       ),
     },
   ];
 
-  const handleEdit = (record: any) => {
-    // 编辑逻辑
-  };
-
   return (
     <div className={styles.container}>
-      <CdsTable
+      <Table
         columns={columns}
         dataSource={dataSource}
         loading={loading}
         rowSelection={{
-          onChange: (selectedRowKeys, selectedRows) => {
+          onChange: (_, selectedRows) => {
             onSelect?.(selectedRows);
           },
         }}
@@ -623,8 +584,10 @@ export default function {组件名}({
 
 ### 组件样式文件
 
+> **完整样式规范请参考**: [项目结构工具文档 - 样式规范](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#7-样式规范css-modules)
+
 ```less
-// src/frontend/src/components/{组件名}/index.module.less
+// src/components/{组件名}/index.module.less
 .container {
   padding: 16px;
   background: #fff;
@@ -637,89 +600,54 @@ export default function {组件名}({
   align-items: center;
   margin-bottom: 16px;
 }
-
-.table {
-  :global {
-    .cds-table-thead > tr > th {
-      background: #fafafa;
-    }
-  }
-}
 ```
 
 ## API 服务生成
 
+> **完整 API 服务生成规范请参考**: [项目结构工具文档 - API 模块定义](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#2-api-模块定义)
+
 ### 服务层结构
 
 ```ts
-// src/frontend/src/services/{模块名}.ts
-import { request } from '@cds/utils/request';
+// src/api/modules/{模块名}.ts
+import request from '../request';
 
-export const {模块名}Service = {
-  // 获取列表
+export const {模块名}Api = {
   getList: (params?: any) =>
-    request({
-      url: '/msService/{moduleCode}/{模块名}/list',
-      method: 'GET',
-      params,
-    }),
+    request.get<any, any[]>('/{moduleCode}/{模块名}/list', { params }),
 
-  // 获取详情
   getDetail: (id: string) =>
-    request({
-      url: `/msService/{moduleCode}/{模块名}/detail/${id}`,
-      method: 'GET',
-    }),
+    request.get<any, any>(`/{moduleCode}/{模块名}/detail/${id}`),
 
-  // 创建记录
   create: (data: any) =>
-    request({
-      url: '/msService/{moduleCode}/{模块名}/create',
-      method: 'POST',
-      data,
-    }),
+    request.post<any, number>('/{moduleCode}/{模块名}/create', data),
 
-  // 更新记录
   update: (id: string, data: any) =>
-    request({
-      url: `/msService/{moduleCode}/{模块名}/update/${id}`,
-      method: 'PUT',
-      data,
-    }),
+    request.put<any, boolean>(`/{moduleCode}/{模块名}/update/${id}`, data),
 
-  // 删除记录
   delete: (id: string) =>
-    request({
-      url: `/msService/{moduleCode}/{模块名}/delete/${id}`,
-      method: 'DELETE',
-    }),
+    request.delete<any, boolean>(`/{moduleCode}/{模块名}/delete/${id}`),
 
-  // 批量操作
   batchDelete: (ids: string[]) =>
-    request({
-      url: '/msService/{moduleCode}/{模块名}/batch-delete',
-      method: 'POST',
-      data: { ids },
-    }),
+    request.post<any, boolean>('/{moduleCode}/{模块名}/batch-delete', { ids }),
 };
 ```
 
 ## 类型定义生成
 
+> **完整类型定义规范请参考**: [项目结构工具文档 - TypeScript 类型定义](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#9-typescript-类型定义)
+
 ### TypeScript 类型定义
 
 ```ts
-// src/frontend/src/types/{模块名}.ts
+// src/types/{模块名}.ts
 export interface {模块名} {
-  id: string;
+  id: number;
   name: string;
   code?: string;
   status: 'ACTIVE' | 'INACTIVE';
   createTime: string;
   updateTime: string;
-  createUser?: string;
-  updateUser?: string;
-  remark?: string;
 }
 
 export interface {模块名}QueryParams {
@@ -727,15 +655,6 @@ export interface {模块名}QueryParams {
   size?: number;
   name?: string;
   status?: string;
-  startDate?: string;
-  endDate?: string;
-}
-
-export interface {模块名}FormData {
-  name: string;
-  code?: string;
-  status: 'ACTIVE' | 'INACTIVE';
-  remark?: string;
 }
 
 export interface ApiResponse<T> {
@@ -755,12 +674,14 @@ export interface ListResponse<T> {
 
 ## 工具函数生成
 
+> **完整工具函数示例请参考**: [项目结构工具文档 - 工具函数](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#10-工具函数)
+
 ### 通用工具函数
 
 ```ts
-// src/frontend/src/utils/{功能}.ts
+// src/utils/{功能}.ts
 import dayjs from 'dayjs';
-import { CdsMessage } from '@sup-lcdp/ui';
+import { message } from 'antd';
 
 // 格式化日期
 export const formatDate = (date: string | Date, format = 'YYYY-MM-DD') => {
@@ -773,98 +694,38 @@ export const formatDateTime = (date: string | Date, format = 'YYYY-MM-DD HH:mm:s
 };
 
 // 显示成功消息
-export const showSuccess = (message: string) => {
-  CdsMessage.success(message);
+export const showSuccess = (msg: string) => {
+  message.success(msg);
 };
 
 // 显示错误消息
-export const showError = (message: string) => {
-  CdsMessage.error(message);
-};
-
-// 显示警告消息
-export const showWarning = (message: string) => {
-  CdsMessage.warning(message);
-};
-
-// 确认对话框
-export const confirmDialog = (title: string, content: string): Promise<boolean> => {
-  return new Promise((resolve) => {
-    // 使用 CdsModal.confirm 实现
-  });
+export const showError = (msg: string) => {
+  message.error(msg);
 };
 ```
 
 ## 国际化资源生成
 
-### 国际化配置
+> **完整国际化配置请参考**: [项目结构工具文档 - 国际化配置](../../cds-product-design-zh/references/FRONTEND-TOOLS-PROJECT-STRUCT.md#8-国际化配置)
+
+### 国际化配置示例
 
 ```ts
-// src/frontend/src/locales/zh-CN.ts
+// src/locales/zh-CN.ts
 export default {
-  // 通用
   common: {
     search: '搜索',
     reset: '重置',
     add: '新增',
     edit: '编辑',
     delete: '删除',
-    view: '查看',
-    save: '保存',
-    cancel: '取消',
-    confirm: '确认',
-    back: '返回',
-    submit: '提交',
-    approve: '审批',
-    reject: '驳回',
   },
 
-  // {功能模块}相关
   {模块名}: {
     title: '{功能模块}管理',
     list: '{功能模块}列表',
-    add: '新增{功能模块}',
-    edit: '编辑{功能模块}',
-    detail: '{功能模块}详情',
     name: '名称',
     code: '编码',
-    status: '状态',
-    createTime: '创建时间',
-    updateTime: '更新时间',
-    remark: '备注',
-  },
-};
-
-// src/frontend/src/locales/en-US.ts
-export default {
-  common: {
-    search: 'Search',
-    reset: 'Reset',
-    add: 'Add',
-    edit: 'Edit',
-    delete: 'Delete',
-    view: 'View',
-    save: 'Save',
-    cancel: 'Cancel',
-    confirm: 'Confirm',
-    back: 'Back',
-    submit: 'Submit',
-    approve: 'Approve',
-    reject: 'Reject',
-  },
-
-  {模块名}: {
-    title: '{功能模块} Management',
-    list: '{功能模块} List',
-    add: 'Add {功能模块}',
-    edit: 'Edit {功能模块}',
-    detail: '{功能模块} Detail',
-    name: 'Name',
-    code: 'Code',
-    status: 'Status',
-    createTime: 'Create Time',
-    updateTime: 'Update Time',
-    remark: 'Remark',
   },
 };
 ```
