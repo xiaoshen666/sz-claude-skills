@@ -4,13 +4,79 @@
 
 本指南详细说明了 CDS 后端项目的启动引导模块结构、启动类实现、配置管理以及相关使用规范。启动引导模块是整个后端应用的入口，负责应用初始化、包扫描、数据源配置、服务注册等核心功能。
 
+## appCode 获取来源与确认规则
+
+在生成启动引导模块前，必须先确认当前项目使用的 `appCode`。
+
+### 获取优先顺序
+
+1. **优先扫描项目中的 App.json 文件**
+   - 查找路径：`{moduleCode}-resource/src/main/resources/META-INF/appdata/App.json`
+   - 提取字段：`code` 字段的值即为 `appCode`
+   - 示例：`{"code":"aiproctsap", ...}` → `appCode = aiproctsap`
+
+2. **若 App.json 存在且成功提取**
+   - 向用户展示读取到的 `appCode` 并确认是否正确
+   - 确认无误后才能继续生成启动类
+
+3. **若 App.json 不存在或未找到 `code` 字段**
+   - 必须向用户询问 `appCode`
+   - 说明该值将用于生成启动类工程名称、健康检查接口路径等
+
+### 标准确认提问话术
+
+#### 情况1：从 App.json 中拿到了 appCode
+
+```
+我已从 App.json 文件中读取到以下应用标识：
+- `appCode`: `{已读取到的appCode}`
+
+该值将用于：
+- 启动类工程名称：`{appCode}-bootstrap`
+- 健康检查接口路径：`/{appCode}/health`
+- 启动类包名：`com.supcon.nebule.{appCode}`
+
+请确认是否正确：
+- 若回复 **正确**：我将继续使用该值生成启动类
+- 若回复 **不正确**：请直接提供正确的 `appCode`
+```
+
+#### 情况2：App.json 不存在或未提取到 appCode
+
+```
+当前项目中未找到 App.json 文件或未提取到 `code` 字段。
+
+请提供当前应用的 `appCode`：
+- `appCode` 是什么？
+
+我需要使用该值生成：
+- 启动类工程：`{appCode}-bootstrap`
+- 启动类：`Bootstrap.java`（包名：`com.supcon.nebule.{appCode}`）
+- 健康检查控制器：`{appCode}HealthController.java`
+- 健康检查接口：`/{appCode}/health`
+
+为避免生成错误，请确认后我再继续。
+```
+
+### appCode 用途说明
+
+| 用途 | 示例 | 说明 |
+|------|------|------|
+| 启动类工程名 | `{appCode}-bootstrap` | Maven 模块名称 |
+| 启动类包名 | `com.supcon.nebule.{appCode}` | Bootstrap.java 所在包 |
+| 健康检查控制器 | `{appCode}HealthController.java` | 健康检查类名 |
+| 健康检查接口 | `/{appCode}/health` | Kubernetes 探针检测路径 |
+| 配置文件 | `bootstrap.properties` | 中的应用标识配置 |
+
 ## 启动引导模块结构
 
 **路径**: `{appCode}-bootstrap/`
 
+> **📌 重要**：`{appCode}` 必须通过上述 **appCode 获取来源与确认规则** 获取并确认后才能使用。
+
 ```
 {appCode}-bootstrap/
-├── src/main/java/com/supcon/nebule/{moduleCode}/
+├── src/main/java/com/supcon/nebule/{appCode}/
 │   ├── {appCode}HealthController.java  # 健康检查接口
 │   └── Bootstrap.java                # 启动类
 ├── src/main/resources/
