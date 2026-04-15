@@ -41,31 +41,23 @@ package com.supcon.nebule.{moduleCode}.custom.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.supcon.nebule.fr.annotation.EnCodeField;
-import io.swagger.annotations.ApiModelProperty;
+
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 @Data
 @TableName("{tableName}")
-@EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
-@EnCodeField(module = "{moduleCode}", model = "{modelCode}", acronym="{acronym}", srcAcronym="")
-public class Custom{ModuleCode}{ModelCode}Entity  {
+@EnCodeField(module = "{moduleCode}", model = "{modelCode}", acronym = "{acronym}", srcAcronym = "")
+public class Custom{ModuleCode}{ModelCode}Entity {
 
-    @ApiModelProperty("名称")
     @TableField("name")
     private String name;
 
-    @ApiModelProperty("编码")
     @TableField("code")
     private String code;
 
-    @ApiModelProperty("状态")
     @TableField("status")
     private String status;
 
-    @ApiModelProperty("备注")
     @TableField("remark")
     private String remark;
 }
@@ -76,26 +68,17 @@ public class Custom{ModuleCode}{ModelCode}Entity  {
 ```java
 package com.supcon.nebule.{moduleCode}.custom.bo;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
 public class Custom{ModuleCode}{ModelCode}BO {
 
-    @ApiModelProperty("名称")
     private String name;
 
-    @ApiModelProperty("编码")
     private String code;
 
-    @ApiModelProperty("状态")
     private String status;
 
-    @ApiModelProperty("备注")
     private String remark;
 }
 ```
@@ -105,29 +88,19 @@ public class Custom{ModuleCode}{ModelCode}BO {
 ```java
 package com.supcon.nebule.{moduleCode}.custom.vo;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
 public class Custom{ModuleCode}{ModelCode}VO {
 
-    @ApiModelProperty("主键ID")
     private Long id;
 
-    @ApiModelProperty("名称")
     private String name;
 
-    @ApiModelProperty("编码")
     private String code;
 
-    @ApiModelProperty("状态")
     private String status;
 
-    @ApiModelProperty("备注")
     private String remark;
 }
 ```
@@ -142,9 +115,7 @@ package com.supcon.nebule.{moduleCode}.custom.dao;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface Custom{ModuleCode}{ModelCode}Dao  {
-    // 继承 BaseDao 已包含基础增删改查方法
-    // 可按需添加自定义查询方法
+public interface Custom{ModuleCode}{ModelCode}Dao {
 }
 ```
 
@@ -161,8 +132,7 @@ public interface Custom{ModuleCode}{ModelCode}Dao  {
 ```java
 package com.supcon.nebule.{moduleCode}.custom.service;
 
-public interface Custom{ModuleCode}{ModelCode}Service  {
-
+public interface Custom{ModuleCode}{ModelCode}Service {
 }
 ```
 
@@ -173,14 +143,12 @@ package com.supcon.nebule.{moduleCode}.custom.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
+
+import com.supcon.nebule.{moduleCode}.custom.service.Custom{ModuleCode}{ModelCode}Service;
 
 @Service
-@Validated
 @Slf4j
 public class Custom{ModuleCode}{ModelCode}ServiceImpl implements Custom{ModuleCode}{ModelCode}Service {
-
 }
 ```
 
@@ -191,17 +159,14 @@ public class Custom{ModuleCode}{ModelCode}ServiceImpl implements Custom{ModuleCo
 ```java
 package com.supcon.nebule.{moduleCode}.custom.controller;
 
+import org.springframework.web.bind.annotation.*;
+
 import com.supcon.supfusion.framework.cloud.annotation.InternalApi;
 import com.supcon.supfusion.framework.cloud.common.constants.HttpConstants;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @InternalApi(path = HttpConstants.URL_SPLITER + "{moduleCode}" + HttpConstants.URL_SPLITER + "{modelCodeLower}")
 public class Custom{ModuleCode}{ModelCode}Controller {
-
-  
 }
 ```
 
@@ -218,47 +183,32 @@ public class Custom{ModuleCode}{ModelCode}Controller {
 ```java
 package com.supcon.nebule.{moduleCode}.custom.api;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.*;
+
 import com.supcon.nebule.{moduleCode}.custom.dto.Custom{ModuleCode}{ModelCode}DTO;
 import com.supcon.supfusion.framework.cloud.annotation.ServiceApi;
 import com.supcon.supfusion.framework.cloud.common.constants.HttpConstants;
 import com.supcon.supfusion.framework.cloud.common.result.Result;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.Valid;
-import java.util.List;
-
-/**
- * {模型名称} Feign API 接口
- * 供其他微服务调用
- */
 @FeignClient(name = "{moduleCode}", contextId = "Custom{ModuleCode}{ModelCode}Api")
 @ServiceApi(path = HttpConstants.URL_SERVICEAPI + HttpConstants.URL_SPLITER 
         + "{moduleCode}" + HttpConstants.URL_SPLITER + "{modelCodeLower}" + HttpConstants.URL_SPLITER + "rpc")
 public interface Custom{ModuleCode}{ModelCode}Api {
 
     @PostMapping("/save")
-    @ApiOperation("保存{模型名称}")
-    Result<Long> save(@RequestBody @Valid Custom{ModuleCode}{ModelCode}DTO dto);
+    Result<Long> save(@RequestBody Custom{ModuleCode}{ModelCode}DTO dto);
 
     @PostMapping("/update")
-    @ApiOperation("更新{模型名称}")
-    Result<Boolean> update(@RequestBody @Valid Custom{ModuleCode}{ModelCode}DTO dto);
+    Result<Boolean> update(@RequestBody Custom{ModuleCode}{ModelCode}DTO dto);
 
     @GetMapping("/getById")
-    @ApiOperation("根据ID获取{模型名称}")
     Result<Custom{ModuleCode}{ModelCode}DTO> getById(@RequestParam("id") Long id);
 
     @PostMapping("/list")
-    @ApiOperation("查询{模型名称}列表")
     Result<List<Custom{ModuleCode}{ModelCode}DTO>> list(@RequestBody Custom{ModuleCode}{ModelCode}DTO dto);
 
     @GetMapping("/delete")
-    @ApiOperation("删除{模型名称}")
     Result<Boolean> delete(@RequestParam("id") Long id);
 }
 ```
@@ -279,45 +229,28 @@ public interface Custom{ModuleCode}{ModelCode}Api {
    - 需要校验的参数添加 `@Valid` 注解
 6. **返回值规范**：统一使用 `Result<T>` 包装返回数据
 
-### DTO 模板（Feign 接口数据传输对象）
+### DTO 模板
 
 ```java
 package com.supcon.nebule.{moduleCode}.custom.dto;
 
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-/**
- * {模型名称} DTO
- * 用于 Feign 接口数据传输
- */
+import lombok.Data;
+
 @Data
-@EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
 public class Custom{ModuleCode}{ModelCode}DTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("主键ID")
     private Long id;
 
-    @ApiModelProperty("名称")
-    @NotBlank(message = "名称不能为空")
     private String name;
 
-    @ApiModelProperty("编码")
     private String code;
 
-    @ApiModelProperty("状态")
     private String status;
 
-    @ApiModelProperty("备注")
     private String remark;
 }
 ```
@@ -333,12 +266,15 @@ public class Custom{ModuleCode}{ModelCode}DTO implements Serializable {
    - VO 用于前端展示，可能包含格式化字段、展示字段
    - BO 用于业务逻辑层，包含业务相关字段
 
-### Controller 实现对应的 Feign API
-
-> **重要**：Feign API 接口定义后，需要在对应的 Controller 中实现相同的接口方法。
+### Controller 实现 Feign API
 
 ```java
 package com.supcon.nebule.{moduleCode}.custom.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import com.supcon.nebule.{moduleCode}.custom.api.Custom{ModuleCode}{ModelCode}Api;
 import com.supcon.nebule.{moduleCode}.custom.bo.Custom{ModuleCode}{ModelCode}BO;
@@ -348,15 +284,7 @@ import com.supcon.supfusion.framework.cloud.annotation.InternalApi;
 import com.supcon.supfusion.framework.cloud.common.constants.HttpConstants;
 import com.supcon.supfusion.framework.cloud.common.result.Result;
 import com.supcon.supfusion.framework.common.utils.PojoUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-/**
- * {模型名称} Controller
- * 同时实现 Feign API 接口，供其他服务调用
- */
 @RestController
 @InternalApi(path = HttpConstants.URL_SPLITER + "{moduleCode}" + HttpConstants.URL_SPLITER + "{modelCodeLower}")
 public class Custom{ModuleCode}{ModelCode}Controller implements Custom{ModuleCode}{ModelCode}Api {
@@ -368,16 +296,14 @@ public class Custom{ModuleCode}{ModelCode}Controller implements Custom{ModuleCod
     @PostMapping("/save")
     public Result<Long> save(@RequestBody Custom{ModuleCode}{ModelCode}DTO dto) {
         Custom{ModuleCode}{ModelCode}BO bo = PojoUtil.copy(dto, Custom{ModuleCode}{ModelCode}BO.class);
-        Long id = custom{ModuleCode}{ModelCode}Service.saveBO(bo);
-        return Result.success(id);
+        return Result.success(custom{ModuleCode}{ModelCode}Service.saveBO(bo));
     }
 
     @Override
     @PostMapping("/update")
     public Result<Boolean> update(@RequestBody Custom{ModuleCode}{ModelCode}DTO dto) {
         Custom{ModuleCode}{ModelCode}BO bo = PojoUtil.copy(dto, Custom{ModuleCode}{ModelCode}BO.class);
-        Boolean result = custom{ModuleCode}{ModelCode}Service.updateBO(bo);
-        return Result.success(result);
+        return Result.success(custom{ModuleCode}{ModelCode}Service.updateBO(bo));
     }
 
     @Override
@@ -398,8 +324,7 @@ public class Custom{ModuleCode}{ModelCode}Controller implements Custom{ModuleCod
     @Override
     @GetMapping("/delete")
     public Result<Boolean> delete(@RequestParam("id") Long id) {
-        Boolean result = custom{ModuleCode}{ModelCode}Service.delete(id);
-        return Result.success(result);
+        return Result.success(custom{ModuleCode}{ModelCode}Service.delete(id));
     }
 }
 ```
