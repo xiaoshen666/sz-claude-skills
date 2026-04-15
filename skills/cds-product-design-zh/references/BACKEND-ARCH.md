@@ -13,8 +13,8 @@
 - **构建工具**：Maven 3.x
 
 ### 数据库支持
-- **关系型数据库**：Oracle11g, MySQL, MariaDB, SQL Server, Kingbase
-- **连接池**：Druid
+- **关系型数据库**：Oracle11g, MariaDB, SQL Server, Kingbase
+- **连接池**：HikariCP
 
 ## 项目结构规范
 
@@ -23,7 +23,7 @@
 ## 命名和编码规范
 
 > **详细组件实现规范请参考**: 
-> - [后端命名和编码规范工具指南](BACKEND-TOOLS-NAMING.md) - 后端命名和编码规范
+> - [后端命名和编码规范工具指南](BACKEND-TOOLS-NAMING.md) - 后端命名、接口 URL、API 请求响应规范
 
 ## 核心组件规范
 
@@ -155,62 +155,16 @@ static/{moduleCode}/
 └── cds-template/dist/*
 ```
 
-### 8.2 API调用规范
+### 8.2 API调用与接口设计规范
 
-```javascript
-// 获取认证Token
-const token = localStorage.getItem('ticket') || '';
-
-// 请求头
-const headers = {
-    'Authorization': 'Bearer ' + token,
-    'x-nebule-model-code': '{modelCode}',
-    'x-nebule-module-code': '{moduleCode}'
-};
-```
-
-### API接口设计
-
-#### 基础增删改查接口
-
-| 接口路径 | 方法 | 描述 | 参数 | 返回值 |
-|---------|------|------|------|--------|
-| `/save` | POST | 保存记录 | Custom{ModuleCode}{ModelCode}VO | Result<Long> |
-| `/info` | GET | 根据ID获取 | id: Long | Result<Custom{ModuleCode}{ModelCode}VO> |
-| `/delete` | POST | 删除记录 | id: Long | Result<Boolean> |
-
-#### 请求参数示例
-
-```json
-// 保存请求体
-{
-    "id": 1,
-    "name": "示例名称",
-    "code": "SAMPLE001",
-    "status": "ENABLED",
-    "remark": "备注信息"
-}
-```
-
-#### 响应结果示例
-
-```json
-// 成功响应
-{
-    "success": true,
-    "errorCode": null,
-    "errorMessage": null,
-    "data": 123
-}
-
-// 失败响应
-{
-    "success": false,
-    "errorCode": "SYSTEM_ERROR",
-    "errorMessage": "系统异常",
-    "data": null
-}
-```
+> **详细 API 调用、接口 URL 与请求响应规范请参考**: [后端命名和编码规范工具指南](BACKEND-TOOLS-NAMING.md)
+> 
+> 包含以下内容：
+> - 请求头规范
+> - 接口 URL 前缀规则（`/public/{moduleCode}/` 与 `/{moduleCode}/`）
+> - 基础增删改查接口设计
+> - 请求参数示例
+> - 响应结果示例
 
 ## 注意事项
 

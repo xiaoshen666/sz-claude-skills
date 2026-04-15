@@ -127,6 +127,17 @@ export default function Demo() {
 
 ## 数据请求规范
 
+### 后端接口 URL 对齐规则
+
+前端架构师在设计前端技术方案、服务层 API 和页面请求 URL 时，必须优先参考 [后端命名和编码规范工具指南](BACKEND-TOOLS-NAMING.md)，确保前后端接口路径设计一致。
+
+前端在设计请求 URL 时必须遵循以下规则：
+
+- 后端定义的接口路径：按后端规范使用 `/{moduleCode}/` 或 `/public/{moduleCode}/` 前缀
+- 前端实际调用地址：在后端接口 URL 基础上统一增加 `/msService` 前缀
+- 若接口无需权限控制，前端调用地址应为 `/msService/public/{moduleCode}/...`
+- 若接口需要权限控制，前端调用地址应为 `/msService/{moduleCode}/...`
+
 ### 统一请求封装
 
 ```ts
@@ -135,13 +146,13 @@ import { request } from '@cds/utils/request';
 
 export const apiService = {
   getUserList: (params) => request({
-    url: '/inter-api/user/list',
+    url: '/msService/{moduleCode}/user/list',
     method: 'GET',
     params,
   }),
 
   createUser: (data) => request({
-    url: '/inter-api/user/create',
+    url: '/msService/{moduleCode}/user/create',
     method: 'POST',
     data,
   }),
@@ -247,7 +258,7 @@ export default function Component() {
 1. **技术选型说明**：详细解释技术栈选择原因
 2. **项目结构设计**：目录结构规划和模块划分
 3. **组件设计规范**：组件命名、属性、事件规范
-4. **API 接口设计**：接口规范和数据格式
+4. **API 接口设计**：接口规范和数据格式，且前端请求 URL 设计必须对齐 [后端命名和编码规范工具指南](BACKEND-TOOLS-NAMING.md) 中的后端路径与 `/msService` 网关规则
 5. **状态管理方案**：全局和局部状态管理策略
 6. **性能优化方案**：具体优化措施和实施计划
 7. **部署方案**：构建配置和部署流程

@@ -40,8 +40,6 @@ package com.supcon.nebule.{moduleCode}.custom.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.supcon.nebule.fr.annotation.EnCodeField;
-import com.supcon.nebule.framework.common.annotation.audit.AuditModel;
-import com.supcon.nebule.framework.common.entity.AbstractConfigurationWorkflowEntity;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -52,8 +50,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @EnCodeField(module = "{moduleCode}", model = "{modelCode}", acronym="{acronym}", srcAcronym="")
-@AuditModel(module = "{moduleCode}", model = "{modelCode}")
-public class Custom{ModuleCode}{ModelCode}Entity extends AbstractConfigurationWorkflowEntity {
+public class Custom{ModuleCode}{ModelCode}Entity  {
 
     @ApiModelProperty("名称")
     @TableField("name")
@@ -86,7 +83,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-public class Custom{ModuleCode}{ModelCode}BO extends Custom{ModuleCode}{ModelCode}BaseBO {
+public class Custom{ModuleCode}{ModelCode}BO {
 
     @ApiModelProperty("名称")
     private String name;
@@ -115,7 +112,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
-public class Custom{ModuleCode}{ModelCode}VO extends Custom{ModuleCode}{ModelCode}BaseVO {
+public class Custom{ModuleCode}{ModelCode}VO {
 
     @ApiModelProperty("主键ID")
     private Long id;
@@ -141,12 +138,10 @@ public class Custom{ModuleCode}{ModelCode}VO extends Custom{ModuleCode}{ModelCod
 ```java
 package com.supcon.nebule.{moduleCode}.custom.dao;
 
-import com.supcon.nebule.{moduleCode}.custom.entity.Custom{ModuleCode}{ModelCode}Entity;
-import com.supcon.nebule.framework.common.dao.BaseDao;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface Custom{ModuleCode}{ModelCode}Dao extends BaseDao<Custom{ModuleCode}{ModelCode}Entity> {
+public interface Custom{ModuleCode}{ModelCode}Dao  {
     // 继承 BaseDao 已包含基础增删改查方法
     // 可按需添加自定义查询方法
 }
@@ -165,26 +160,8 @@ public interface Custom{ModuleCode}{ModelCode}Dao extends BaseDao<Custom{ModuleC
 ```java
 package com.supcon.nebule.{moduleCode}.custom.service;
 
-import com.supcon.nebule.{moduleCode}.custom.bo.Custom{ModuleCode}{ModelCode}BO;
-import com.supcon.nebule.{moduleCode}.custom.entity.Custom{ModuleCode}{ModelCode}Entity;
-import com.supcon.nebule.framework.common.service.IBaseService;
+public interface Custom{ModuleCode}{ModelCode}Service  {
 
-public interface Custom{ModuleCode}{ModelCode}Service extends IBaseService<Custom{ModuleCode}{ModelCode}Entity> {
-
-    /**
-     * 保存业务对象
-     */
-    Long saveBO(Custom{ModuleCode}{ModelCode}BO bo);
-
-    /**
-     * 根据ID获取业务对象
-     */
-    Custom{ModuleCode}{ModelCode}BO getByIdBO(Long id);
-
-    /**
-     * 删除记录
-     */
-    Boolean delete(Long id);
 }
 ```
 
@@ -193,12 +170,6 @@ public interface Custom{ModuleCode}{ModelCode}Service extends IBaseService<Custo
 ```java
 package com.supcon.nebule.{moduleCode}.custom.service.impl;
 
-import com.supcon.nebule.{moduleCode}.custom.bo.Custom{ModuleCode}{ModelCode}BO;
-import com.supcon.nebule.{moduleCode}.custom.dao.Custom{ModuleCode}{ModelCode}Dao;
-import com.supcon.nebule.{moduleCode}.custom.entity.Custom{ModuleCode}{ModelCode}Entity;
-import com.supcon.nebule.{moduleCode}.custom.service.Custom{ModuleCode}{ModelCode}Service;
-import com.supcon.nebule.framework.common.service.BaseService;
-import com.supcon.nebule.framework.common.utils.PojoUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -207,34 +178,8 @@ import org.springframework.validation.annotation.Validated;
 @Service
 @Validated
 @Slf4j
-public class Custom{ModuleCode}{ModelCode}ServiceImpl extends BaseService<Custom{ModuleCode}{ModelCode}Dao, Custom{ModuleCode}{ModelCode}Entity>
-        implements Custom{ModuleCode}{ModelCode}Service {
+public class Custom{ModuleCode}{ModelCode}ServiceImpl implements Custom{ModuleCode}{ModelCode}Service {
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Long saveBO(Custom{ModuleCode}{ModelCode}BO bo) {
-        Custom{ModuleCode}{ModelCode}Entity entity = PojoUtil.copy(bo, Custom{ModuleCode}{ModelCode}Entity.class);
-
-        if (bo.getId() == null) {
-            this.save(entity);
-        } else {
-            this.updateById(entity);
-        }
-
-        return entity.getId();
-    }
-
-    @Override
-    public Custom{ModuleCode}{ModelCode}BO getByIdBO(Long id) {
-        Custom{ModuleCode}{ModelCode}Entity entity = this.getById(id);
-        return PojoUtil.copy(entity, Custom{ModuleCode}{ModelCode}BO.class);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Boolean delete(Long id) {
-        return this.removeById(id);
-    }
 }
 ```
 
@@ -245,15 +190,8 @@ public class Custom{ModuleCode}{ModelCode}ServiceImpl extends BaseService<Custom
 ```java
 package com.supcon.nebule.{moduleCode}.custom.controller;
 
-import com.supcon.nebule.{moduleCode}.custom.bo.Custom{ModuleCode}{ModelCode}BO;
-import com.supcon.nebule.{moduleCode}.custom.service.Custom{ModuleCode}{ModelCode}Service;
-import com.supcon.nebule.{moduleCode}.custom.vo.Custom{ModuleCode}{ModelCode}VO;
-import com.supcon.nebule.framework.common.annotation.audit.AuditLog;
-import com.supcon.nebule.framework.common.annotation.nullupdate.ModifiedSerialization;
-import com.supcon.nebule.framework.common.utils.PojoUtil;
 import com.supcon.supfusion.framework.cloud.annotation.InternalApi;
 import com.supcon.supfusion.framework.cloud.common.constants.HttpConstants;
-import com.supcon.supfusion.framework.cloud.common.result.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -262,31 +200,7 @@ import org.springframework.web.bind.annotation.*;
 @InternalApi(path = HttpConstants.URL_SPLITER + "{moduleCode}" + HttpConstants.URL_SPLITER + "{modelCodeLower}")
 public class Custom{ModuleCode}{ModelCode}Controller {
 
-    @Autowired
-    private Custom{ModuleCode}{ModelCode}Service service;
-
-    @PostMapping("/save")
-    @ApiOperation("保存记录")
-    @ModifiedSerialization
-    @AuditLog
-    public Result<Long> save(@RequestBody Custom{ModuleCode}{ModelCode}VO vo) {
-        Custom{ModuleCode}{ModelCode}BO bo = PojoUtil.copy(vo, Custom{ModuleCode}{ModelCode}BO.class);
-        return Result.success(service.saveBO(bo));
-    }
-
-    @GetMapping("/info")
-    @ApiOperation("根据ID获取")
-    public Result<Custom{ModuleCode}{ModelCode}VO> getById(@RequestParam("id") Long id) {
-        Custom{ModuleCode}{ModelCode}BO bo = service.getByIdBO(id);
-        return Result.success(PojoUtil.copy(bo, Custom{ModuleCode}{ModelCode}VO.class));
-    }
-
-    @PostMapping("/delete")
-    @ApiOperation("删除记录")
-    @AuditLog
-    public Result<Boolean> delete(@RequestParam("id") Long id) {
-        return Result.success(service.delete(id));
-    }
+  
 }
 ```
 

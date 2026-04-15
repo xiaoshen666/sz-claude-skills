@@ -16,6 +16,8 @@
 
 ### CDS 框架专精
 - **项目结构**：熟练掌握 整体项目结构和 {moduleCode}-custom 目录结构（详见 [项目结构工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md)）
+- **启动引导模块**：Spring Boot 启动类设计、健康检查接口、bootstrap.properties 配置规范（详见 [启动引导模块工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md)）
+- **命名与接口规范**：后端命名、接口 URL、请求头与 API 请求示例请统一参考 [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
 - **业务代码生成**：统一基于 Entity / BO / VO / DAO / Mapper / Service / Controller 模板生成业务代码（详见 [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)）
 - **模块注册**：ModuleRegisterInitialize、菜单注册、工作流注册等实现请引用 [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
 - **配置管理**：公共服务配置和自动扫描配置（详见 [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md)）
@@ -125,24 +127,13 @@
 
 ## API 开发规范
 
-### 接口设计
-| 接口路径 | 方法 | 描述 | 参数 | 返回值 |
-|---------|------|------|------|--------|
-| `/save` | POST | 保存记录 | Custom{ModuleCode}{ModelCode}VO | Result<Long> |
-| `/info` | GET | 根据ID获取 | id: Long | Result<Custom{ModuleCode}{ModelCode}VO> |
-| `/delete` | POST | 删除记录 | id: Long | Result<Boolean> |
-
-### 请求参数示例
-```json
-// 保存请求体
-{
-    "id": 1,
-    "name": "示例名称",
-    "code": "SAMPLE001",
-    "status": "ENABLED",
-    "remark": "备注信息"
-}
-```
+> **详细接口 URL、请求头、请求参数示例请参考**: [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
+>
+> 接口路径前缀必须遵循以下规则：
+> - 不需要权限控制的接口：`/public/{moduleCode}/` 开头
+> - 需要权限控制的接口：`/{moduleCode}/` 开头
+>
+> 基础增删改查接口、请求头和请求参数示例统一按上述工具文档执行。
 
 ### 响应结果示例
 ```json
@@ -171,13 +162,20 @@
 - 注释使用中文
 
 ### 命名规范
-- **包命名**：`com.supcon.nebule.{moduleCode}.custom`
-- **Entity**：`Custom{ModuleCode}{ModelCode}Entity`
-- **DAO**：`Custom{ModuleCode}{ModelCode}Dao`
-- **Service**：`Custom{ModuleCode}{ModelCode}Service`
-- **Controller**：`Custom{ModuleCode}{ModelCode}Controller`
-- **VO**：`Custom{ModuleCode}{ModelCode}VO`
-- **BO**：`Custom{ModuleCode}{ModelCode}BO`
+
+> **详细命名、接口 URL 与请求响应规范请参考**: [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
+>
+> develop 阶段必须在此基础上遵循以下约束：
+> - **包命名**：`com.supcon.nebule.{moduleCode}.custom`
+> - **Entity**：`Custom{ModuleCode}{ModelCode}Entity`
+> - **DAO**：`Custom{ModuleCode}{ModelCode}Dao`
+> - **Service**：`Custom{ModuleCode}{ModelCode}Service`
+> - **Controller**：`Custom{ModuleCode}{ModelCode}Controller`
+> - **VO**：`Custom{ModuleCode}{ModelCode}VO`
+> - **BO**：`Custom{ModuleCode}{ModelCode}BO`
+> - **受控接口路径前缀**：`/{moduleCode}/`
+> - **公开接口路径前缀**：`/public/{moduleCode}/`
+> - **前端实际调用地址**：在后端接口 URL 前统一增加 `/msService`
 
 ### 事务管理
 - 使用 `@Transactional(rollbackFor = Exception.class)`
@@ -210,7 +208,8 @@ mvn checkstyle:check
 6. **生成基础代码**：基于确认后的 `moduleCode`、`acronym` 创建Entity、DAO、Service、Controller
 7. **实现业务逻辑**：编写核心业务代码
 8. **添加配置类**：配置扫描和模块注册
-9. **测试验证**：确保功能正确性
+9. **启动模块配置**：正确配置启动类包扫描、Mapper 扫描和 Feign 客户端
+10. **测试验证**：确保功能正确性
 
 ### 3. 代码提交
 - 遵循 Git 提交规范
@@ -232,10 +231,11 @@ mvn checkstyle:check
 4. **性能优化**：合理使用缓存和批量操作
 
 ### 控制器设计原则
-1. **RESTful 风格**：遵循 RESTful API 设计规范
-2. **参数校验**：使用注解进行参数验证
-3. **统一响应**：使用 Result 包装响应结果
-4. **日志记录**：添加必要的操作日志
+1. **RESTful 风格**：遵循 RESTful API 设计规范，并优先对齐 [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md) 中的接口命名与路径规则
+2. **路径前缀规范**：需要权限控制的接口使用 `/{moduleCode}/`，不需要权限控制的接口使用 `/public/{moduleCode}/`
+3. **参数校验**：使用注解进行参数验证
+4. **统一响应**：响应结构使用项目既定的 `code` / `message` / `data` 字段
+5. **日志记录**：添加必要的操作日志
 
 ### 错误处理
 1. **业务异常**：定义业务相关的异常类型
@@ -250,7 +250,9 @@ mvn checkstyle:check
 | 工具文档 | 用途 | 使用场景 |
 |---------|------|----------|
 | [项目结构工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md) | CDS项目目录结构和模块划分 | 新建项目、理解项目结构时 |
+| [启动引导模块工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md) | Spring Boot 启动类、健康检查、bootstrap.properties 配置 | 应用启动配置、健康检查接口开发时 |
 | [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md) | Entity / BO / VO / DAO / Mapper / Service / Controller 业务代码模板 | 后端业务逻辑代码生成时 |
+| [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md) | 后端命名、接口 URL、请求头与 API 请求参数规范 | Controller 设计、接口路径规划、API 示例编写时 |
 | [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 | 配置类开发、包扫描配置时 |
 | [数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md) | 数据库设计和SQL脚本规范 | 数据库设计、表结构创建时 |
 | [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 模块注册、菜单注册、工作流注册 | 模块初始化、系统集成时 |
@@ -258,10 +260,12 @@ mvn checkstyle:check
 ### 使用建议
 
 1. **新手入门**: 先阅读项目结构工具指南，理解整体架构
-2. **业务实现**: 先参考后端业务代码生成工具指南，生成 Entity / DAO / Service / Controller 等基础代码
-3. **配置开发**: 参考配置管理工具指南，正确配置扫描和注册
-4. **数据库设计**: 使用数据库规范工具指南，确保表结构规范
-5. **模块集成**: 查看模块注册工具指南，完成系统注册配置
+2. **启动配置**: 参考启动引导模块工具指南，正确配置启动类、健康检查和 bootstrap.properties
+3. **业务实现**: 先参考后端业务代码生成工具指南，生成 Entity / DAO / Service / Controller 等基础代码
+4. **接口设计**: 参考后端命名和编码规范工具指南，确定接口路径前缀、请求头、响应结构和 API 请求示例
+5. **配置开发**: 参考配置管理工具指南，正确配置扫描和注册
+6. **数据库设计**: 使用数据库规范工具指南，确保表结构规范
+7. **模块集成**: 查看模块注册工具指南，完成系统注册配置
 
 ### 工具文档特点
 

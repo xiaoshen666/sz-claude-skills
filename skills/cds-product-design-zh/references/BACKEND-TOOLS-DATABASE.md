@@ -110,25 +110,29 @@ CREATE TABLE {acronym}_{modelCode小写} (
 
 ## SQL 脚本规范
 
+### 重要约束
+
+> **⚠️ 禁止使用数据库层面功能**：
+> - ❌ 禁止使用存储过程（Stored Procedures）
+> - ❌ 禁止使用触发器（Triggers）
+> - ❌ 禁止使用函数（Functions）
+> - ❌ 禁止使用数据库层面的定时任务
+> - ❌ 禁止使用复杂的数据库特定语法
+> 
+> **原因**：数据库层面的功能难以维护、调试困难、不利于版本控制，所有业务逻辑应在应用层实现。
+
 ### 文件命名规范
 
-#### 初始化脚本
+#### 初始化脚本（唯一脚本文件）
 ```
 {moduleCode}CustomInit.sql
 
 示例:
-aiproctsCustomInit.sql        # 请假单模块初始化脚本
-salesCustomInit.sql           # 销售模块初始化脚本
+aiproctsCustomInit.sql        # AI流程模块初始化脚本（所有版本都在此文件）
+salesCustomInit.sql           # 销售模块初始化脚本（所有版本都在此文件）
 ```
 
-#### 版本升级脚本
-```
-{moduleCode}CustomUpgrade_{version}.sql
-
-示例:
-aiproctsCustomUpgrade_1.1.0.sql
-salesCustomUpgrade_2.0.0.sql
-```
+> **📌 重要**：每个模块只有 **一个** `{moduleCode}CustomInit.sql` 文件，所有版本的建表、字段变更、索引创建都放在这个文件中，通过 `## X.Y.Z` 版本标记来控制。
 
 ### 脚本内容规范
 
@@ -316,7 +320,158 @@ CHECK (status IN ('ENABLED', 'DISABLED', 'DELETED'));
 
 ## 数据库初始化流程
 
-### 1. 环境准备
+### SupOS DBP 框架自动化初始化
+
+> **📌 重要说明**：CDS 项目的数据库初始化由 **SupOS DBP（Database Platform）框架** 自动负责，开发者无需手动执行数据库初始化脚本。
+
+### DBP 框架初始化机制
+
+#### 1. 初始化脚本存放位置
+
+```
+{moduleCode}-custom/
+└── {moduleCode}-custom-dao/
+    └── src/main/resources/
+        └── META-INF/
+            ├── oracle/
+            │   └── {moduleCode}CustomInit.sql      # Oracle 数据库初始化脚本
+            ├── kingbase/
+            │   └── {moduleCode}CustomInit.sql      # 人大金仓数据库初始化脚本
+            ├── mariadb/
+            │   └── {moduleCode}CustomInit.sql      # MariaDB 数据库初始化脚本
+            └── sqlserver/
+                └── {moduleCode}CustomInit.sql      # SQL Server 数据库初始化脚本
+```
+
+> **📌 重要说明**：
+> - 所有自定义建表都放在 **同一个脚本文件** `{moduleCode}CustomInit.sql` 中
+> - 通过 **版本控制格式**（`## X.Y.Z`）来控制不同版本的表结构变更
+> - **不需要**创建单独的升级脚本文件
+> - 支持多数据库，每个数据库在 `META-INF/` 下有独立的文件夹
+
+#### 2. DBP 框架自动执行流程
+
+1. **应用启动时**：DBP 框架根据当前数据库类型，自动扫描 `META-INF/{database}/` 目录下的 `{moduleCode}CustomInit.sql` 脚本
+2. **版本解析**：读取脚本文件中的版本标记（`## X.Y.Z`），解析每个版本的 SQL 语句块
+3. **版本比对**：读取数据库中的版本记录表，比对当前已执行的版本
+4. **顺序执行**：按版本号从小到大顺序执行未执行过的版本区块
+5. **版本记录**：每个版本区块执行成功后，自动记录版本号到版本记录表
+6. **失败回滚**：某个版本区块执行失败时自动回滚，保证数据一致性
+
+#### 3. 版本控制格式（单一文件多版本）
+
+> **📌 核心机制**：所有版本都放在同一个 `{moduleCode}CustomInit.sql` 文件中，通过 `## X.Y.Z` 标记来区分不同版本。
+
+```sql
+## 1.0.0
+-- 第一版本：创建基础表
+CREATE TABLE {acronym}_{modelCode} (
+    id NUMBER(19) PRIMARY KEY,
+    name VARCHAR2(255) NOT NULL,
+    -- ... 其他字段
+);
+COMMENT ON TABLE {acronym}_{modelCode} IS '表说明';
+COMMENT ON COLUMN {acronym}_{modelCode}.id IS '主键ID';
+
+## 1.1.0
+-- 第二版本：新增业务表
+CREATE TABLE {acronym}_{modelCode2} (
+    id NUMBER(19) PRIMARY KEY,
+    title VARCHAR2(255) NOT NULL,
+    -- ... 其他字段
+);
+COMMENT ON TABLE {acronym}_{modelCode2} IS '表说明2';
+
+## 1.2.0
+-- 第三版本：为已有表添加新字段
+ALTER TABLE {acronym}_{modelCode} ADD remark VARCHAR2(1000);
+COMMENT ON COLUMN {acronym}_{modelCode}.remark IS '备注信息';
+
+## 2.0.0
+-- 第四版本：重大变更，创建新索引
+CREATE INDEX idx_{acronym}_{modelCode}_status ON {acronym}_{modelCode}(status);
+```
+
+> **💡 示例参考**：查看实际项目中的 [aiproctsCustomInit.sql](file:///c:/Users/shenzhiqiang/.claude/aiprocts-backend/aiprocts/aiprocts-custom/aiprocts-custom-dao/src/main/resources/META-INF/oracle/aiproctsCustomInit.sql)
+
+#### 4. 开发者职责
+
+- ✅ 在 `{moduleCode}-custom-dao/src/main/resources/META-INF/{database}/` 目录下维护 `{moduleCode}CustomInit.sql`
+- ✅ 所有新建表、字段变更、索引创建都放在同一个脚本文件中
+- ✅ 使用 `## X.Y.Z` 版本标记来组织不同版本的 SQL 语句块
+- ✅ 遵循语义化版本规范（X.Y.Z）
+- ✅ 确保 SQL 脚本幂等性（可重复执行）
+- ✅ 为每个表和字段添加清晰的注释
+- ❌ 无需创建单独的升级脚本文件
+- ❌ 无需手动执行 SQL 脚本
+- ❌ 无需手动管理数据库用户和表空间
+
+### 脚本编写示例
+
+#### 单一文件多版本示例
+
+```sql
+## 1.0.0
+-- 创建请假单表
+CREATE TABLE aipro_qjdst (
+    id NUMBER(19) NOT NULL PRIMARY KEY,
+    name VARCHAR2(255) NOT NULL,
+    code VARCHAR2(100),
+    status VARCHAR2(50),
+    cid NUMBER(19),
+    create_date TIMESTAMP DEFAULT SYSTIMESTAMP,
+    create_user_id NUMBER(19),
+    edit_date TIMESTAMP DEFAULT SYSTIMESTAMP,
+    edit_user_id NUMBER(19),
+    version NUMBER(10) DEFAULT 1
+);
+
+-- 添加表注释
+COMMENT ON TABLE aipro_qjdst IS '请假单表';
+COMMENT ON COLUMN aipro_qjdst.id IS '主键ID';
+COMMENT ON COLUMN aipro_qjdst.name IS '请假单名称';
+COMMENT ON COLUMN aipro_qjdst.code IS '请假单编码';
+
+## 1.1.0
+-- 新增员工信息表
+CREATE TABLE aipro_employee (
+    id NUMBER(19) NOT NULL PRIMARY KEY,
+    emp_code VARCHAR2(100) NOT NULL,
+    emp_name VARCHAR2(255) NOT NULL,
+    dept_code VARCHAR2(100),
+    create_date TIMESTAMP DEFAULT SYSTIMESTAMP
+);
+
+COMMENT ON TABLE aipro_employee IS '员工信息表';
+COMMENT ON COLUMN aipro_employee.emp_code IS '员工编码';
+COMMENT ON COLUMN aipro_employee.emp_name IS '员工姓名';
+
+## 1.2.0
+-- 为请假单表新增备注字段
+ALTER TABLE aipro_qjdst ADD remark VARCHAR2(1000);
+COMMENT ON COLUMN aipro_qjdst.remark IS '备注信息';
+
+-- 为请假单表创建索引
+CREATE INDEX idx_aipro_qjdst_status ON aipro_qjdst(status);
+CREATE UNIQUE INDEX uk_aipro_qjdst_code ON aipro_qjdst(code);
+
+## 2.0.0
+-- 新增考勤记录表
+CREATE TABLE aipro_attendance (
+    id NUMBER(19) NOT NULL PRIMARY KEY,
+    emp_id NUMBER(19) NOT NULL,
+    check_in_time TIMESTAMP,
+    check_out_time TIMESTAMP,
+    create_date TIMESTAMP DEFAULT SYSTIMESTAMP
+);
+
+COMMENT ON TABLE aipro_attendance IS '考勤记录表';
+CREATE INDEX idx_aipro_attendance_emp ON aipro_attendance(emp_id);
+```
+
+### 数据库环境准备（由运维/DBA 负责）
+
+> 以下内容仅由运维团队或 DBA 在首次部署时执行，开发者无需关注：
 
 ```sql
 -- 创建表空间（DBA操作）
@@ -331,35 +486,13 @@ DEFAULT TABLESPACE {moduleCode}_ts;
 GRANT CONNECT, RESOURCE TO {moduleCode};
 ```
 
-### 2. 表结构创建
+### 注意事项
 
-```sql
--- 执行初始化脚本
-@aiproctsCustomInit.sql
-```
-
-### 3. 基础数据插入
-
-```sql
--- 插入必要的初始化数据
-INSERT INTO aipro_sys_config (id, config_key, config_value, status) 
-VALUES (1, 'SYSTEM_NAME', 'AI流程管理系统', 'ENABLED');
-
--- 提交事务
-COMMIT;
-```
-
-### 4. 索引和约束
-
-```sql
--- 创建必要的索引
-CREATE INDEX idx_aipro_qjdst_status ON aipro_qjdst(status);
-CREATE INDEX idx_aipro_qjdst_create_date ON aipro_qjdst(create_date);
-
--- 添加约束
-ALTER TABLE aipro_qjdst ADD CONSTRAINT ck_aipro_qjdst_status 
-CHECK (status IN ('ENABLED', 'DISABLED', 'DELETED'));
-```
+1. **幂等性要求**：所有 SQL 脚本必须保证可重复执行，建议使用 `IF NOT EXISTS` 或先检查后创建的方式
+2. **版本顺序**：严格按照语义化版本号顺序执行，不可跳版本
+3. **事务管理**：每个版本区块（`## X.Y.Z`）内的 SQL 应在同一事务中执行
+4. **回滚机制**：DBP 框架会在脚本执行失败时自动回滚，确保数据库状态一致
+5. **日志记录**：DBP 框架会记录每次执行的脚本版本和执行结果，便于问题排查
 
 ## 数据库维护
 
@@ -429,19 +562,9 @@ START WITH 1
 INCREMENT BY 1
 NOCACHE
 NOCYCLE;
-
--- 触发器（自动设置创建时间）
-CREATE OR REPLACE TRIGGER trg_{table_name}_create
-BEFORE INSERT ON {table_name}
-FOR EACH ROW
-BEGIN
-    :NEW.create_date := SYSTIMESTAMP;
-    :NEW.edit_date := SYSTIMESTAMP;
-    IF :NEW.id IS NULL THEN
-        :NEW.id := seq_{table_name}.nextval;
-    END IF;
-END;
 ```
+
+> **⚠️ 注意**：不再使用触发器自动设置创建时间，应在应用层通过 MyBatis-Plus 的 `@TableField` 注解或 Java 代码实现。
 
 ### MySQL 特定语法
 

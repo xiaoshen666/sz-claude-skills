@@ -19,6 +19,7 @@
 - **组件库**：熟练使用 CdsInput、CdsButton、CdsTable 等核心组件
 - **状态管理**：React Hooks + ahooks 的状态管理方案
 - **API 集成**：基于 @cds/utils/request 的统一请求封装
+- **接口路由对齐**：前端请求 URL 设计必须对齐 [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)，实际调用统一使用 `/msService` + 后端接口路径
 - **国际化**：多语言支持实现
 
 ## 前序设计产物检查规则
@@ -124,6 +125,13 @@ export const useCustomHook = (params: any): UseCustomHookReturn => {
 
 ### API 服务开发规范
 
+> **详细接口 URL 与前端调用规则请参考**: [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
+>
+> 前端服务层封装必须遵循以下规则：
+> - 需要权限控制的接口：前端调用地址使用 `/msService/{moduleCode}/...`
+> - 不需要权限控制的接口：前端调用地址使用 `/msService/public/{moduleCode}/...`
+> - 不得继续使用 `/inter-api/...` 这类历史路径示例
+
 #### 服务层封装
 ```typescript
 // src/services/user.ts
@@ -133,7 +141,7 @@ export const userApiService = {
   // 获取用户列表
   getUserList: (params: { page: number; size: number }) => 
     request({
-      url: '/inter-api/user/list',
+      url: '/msService/{moduleCode}/user/list',
       method: 'GET',
       params,
     }),
@@ -141,7 +149,7 @@ export const userApiService = {
   // 创建用户
   createUser: (data: any) => 
     request({
-      url: '/inter-api/user/create',
+      url: '/msService/{moduleCode}/user/create',
       method: 'POST',
       data,
     }),
@@ -149,7 +157,7 @@ export const userApiService = {
   // 更新用户
   updateUser: (id: number, data: any) => 
     request({
-      url: `/inter-api/user/update/${id}`,
+      url: `/msService/{moduleCode}/user/update/${id}`,
       method: 'PUT',
       data,
     }),
@@ -157,7 +165,7 @@ export const userApiService = {
   // 删除用户
   deleteUser: (id: number) => 
     request({
-      url: `/inter-api/user/delete/${id}`,
+      url: `/msService/{moduleCode}/user/delete/${id}`,
       method: 'DELETE',
     }),
 };
@@ -651,7 +659,7 @@ export const {模块名}Service = {
   // 获取列表
   getList: (params?: any) =>
     request({
-      url: '/inter-api/{模块名}/list',
+      url: '/msService/{moduleCode}/{模块名}/list',
       method: 'GET',
       params,
     }),
@@ -659,14 +667,14 @@ export const {模块名}Service = {
   // 获取详情
   getDetail: (id: string) =>
     request({
-      url: `/inter-api/{模块名}/detail/${id}`,
+      url: `/msService/{moduleCode}/{模块名}/detail/${id}`,
       method: 'GET',
     }),
 
   // 创建记录
   create: (data: any) =>
     request({
-      url: '/inter-api/{模块名}/create',
+      url: '/msService/{moduleCode}/{模块名}/create',
       method: 'POST',
       data,
     }),
@@ -674,7 +682,7 @@ export const {模块名}Service = {
   // 更新记录
   update: (id: string, data: any) =>
     request({
-      url: `/inter-api/{模块名}/update/${id}`,
+      url: `/msService/{moduleCode}/{模块名}/update/${id}`,
       method: 'PUT',
       data,
     }),
@@ -682,14 +690,14 @@ export const {模块名}Service = {
   // 删除记录
   delete: (id: string) =>
     request({
-      url: `/inter-api/{模块名}/delete/${id}`,
+      url: `/msService/{moduleCode}/{模块名}/delete/${id}`,
       method: 'DELETE',
     }),
 
   // 批量操作
   batchDelete: (ids: string[]) =>
     request({
-      url: '/inter-api/{模块名}/batch-delete',
+      url: '/msService/{moduleCode}/{模块名}/batch-delete',
       method: 'POST',
       data: { ids },
     }),

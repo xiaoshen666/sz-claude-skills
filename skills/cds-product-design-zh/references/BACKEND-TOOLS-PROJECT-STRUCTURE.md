@@ -233,27 +233,30 @@ com.supcon.nebule.{moduleCode}.custom/
 
 **路径**: `{appCode}-bootstrap/`
 
-**启动类**:
-```java
-@SpringBootApplication(scanBasePackages={
-    "com.supcon.nebule.{appCode}",
-    "com.supcon.nebule.framework.starter",
-    "com.supcon.nebule.api.workflow",
-    "com.supcon.nebule.{moduleCode}"
-})
-@MapperScan({
-    "com.supcon.nebule.{moduleCode}.dao",
-    "com.supcon.nebule.{moduleCode}.custom.dao"
-})
-@EnableScheduling
-@EnableFeignClients({...})
-public class Bootstrap {
-    public static void main(String[] args) {
-        ApusicEnvUtil.initBeforeStart();
-        SpringApplication.run(Bootstrap.class, args);
-    }
-}
+启动引导模块是 CDS 后端应用的入口模块，负责应用启动、健康检查和基础配置。详细说明和标准模板请参考：
+
+👉 **[启动引导模块工具指南](BACKEND-TOOLS-BOOTSTRAP.md)**
+
+### 目录结构概览
+
 ```
+{appCode}-bootstrap/
+├── src/main/java/com/supcon/nebule/{appCode}/
+│   ├── Bootstrap.java                # Spring Boot 启动类
+│   └── {appCode}HealthController.java  # 健康检查控制器
+├── src/main/resources/
+│   ├── bootstrap.properties          # 引导配置文件
+│   └── logback-spring.xml            # 日志配置
+└── pom.xml                           # Maven 依赖配置
+```
+
+### 核心组件说明
+
+| 组件 | 职责 |
+|------|------|
+| `Bootstrap.java` | Spring Boot 启动类，配置包扫描、Mapper 扫描、Feign 客户端 |
+| `{appCode}HealthController.java` | Kubernetes 健康检查接口 `/{appCode}/health` |
+| `bootstrap.properties` | Nacos 配置中心、模块编码、MyBatis Mapper 路径等核心配置 |
 
 ## 前端编译之后页面资源目录规范
 
