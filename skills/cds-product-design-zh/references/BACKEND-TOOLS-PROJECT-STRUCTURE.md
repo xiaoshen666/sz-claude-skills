@@ -9,7 +9,7 @@
 ### 整体项目结构
 
 ```
-{moduleCode}-V1.0.0/
+{moduleCode}-xxx/
 ├── {moduleCode}/
 │   ├── {moduleCode}-api/                    # 平台生成的API接口
 │   ├── {moduleCode}-common/                 # 平台生成的公共类

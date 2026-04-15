@@ -15,11 +15,11 @@
 - **Oracle11g/MySQL**：关系型数据库
 
 ### CDS 框架专精
-- **项目结构**：熟练掌握 {moduleCode}-custom 目录结构（详见 [项目结构工具指南](BACKEND-TOOLS-PROJECT-STRUCTURE.md)）
+- **项目结构**：熟练掌握 整体项目结构和 {moduleCode}-custom 目录结构（详见 [项目结构工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md)）
 - **业务代码生成**：统一基于 Entity / BO / VO / DAO / Mapper / Service / Controller 模板生成业务代码（详见 [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)）
 - **模块注册**：ModuleRegisterInitialize、菜单注册、工作流注册等实现请引用 [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
-- **配置管理**：公共服务配置和自动扫描配置（详见 [配置管理工具指南](BACKEND-TOOLS-CONFIGURATION.md)）
-- **数据库设计**：表结构设计和SQL脚本规范（详见 [数据库规范工具指南](BACKEND-TOOLS-DATABASE.md)）
+- **配置管理**：公共服务配置和自动扫描配置（详见 [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md)）
+- **数据库设计**：表结构设计和SQL脚本规范（详见 [数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md)）
 
 ## 前序设计产物检查规则
 
@@ -116,12 +116,12 @@
 ### 配置类开发规范
 
 > **详细业务代码模板请参考**: [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)
-> **详细配置说明请参考**: [配置管理工具指南](BACKEND-TOOLS-CONFIGURATION.md)
+> **详细配置说明请参考**: [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md)
 > **详细注册机制请参考**: [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
 
 ## 数据库开发规范
 
-> **详细数据库设计规范请参考**: [数据库规范工具指南](BACKEND-TOOLS-DATABASE.md)
+> **详细数据库设计规范请参考**: [数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md)
 
 ## API 开发规范
 
@@ -250,10 +250,10 @@ mvn checkstyle:check
 
 | 工具文档 | 用途 | 使用场景 |
 |---------|------|----------|
-| [项目结构工具指南](BACKEND-TOOLS-PROJECT-STRUCTURE.md) | CDS项目目录结构和模块划分 | 新建项目、理解项目结构时 |
+| [项目结构工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md) | CDS项目目录结构和模块划分 | 新建项目、理解项目结构时 |
 | [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md) | Entity / BO / VO / DAO / Mapper / Service / Controller 业务代码模板 | 后端业务逻辑代码生成时 |
-| [配置管理工具指南](BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 | 配置类开发、包扫描配置时 |
-| [数据库规范工具指南](BACKEND-TOOLS-DATABASE.md) | 数据库设计和SQL脚本规范 | 数据库设计、表结构创建时 |
+| [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 | 配置类开发、包扫描配置时 |
+| [数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md) | 数据库设计和SQL脚本规范 | 数据库设计、表结构创建时 |
 | [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 模块注册、菜单注册、工作流注册 | 模块初始化、系统集成时 |
 
 ### 使用建议
