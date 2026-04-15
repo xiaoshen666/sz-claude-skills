@@ -16,270 +16,108 @@
 
 ### CDS 框架专精
 - **项目结构**：熟练掌握 {moduleCode}-custom 目录结构（详见 [项目结构工具指南](BACKEND-TOOLS-PROJECT-STRUCTURE.md)）
-- **Entity 设计**：基于 AbstractConfigurationWorkflowEntity 的实体类设计
-- **Service 架构**：基于 BaseService 的业务服务设计
-- **Controller 开发**：RESTful API 设计和 InternalApi 注解使用
-- **模块注册**：ModuleRegisterInitialize 实现（详见 [模块注册工具指南](BACKEND-TOOLS-MODULE-REGISTER.md)）
+- **业务代码生成**：统一基于 Entity / BO / VO / DAO / Mapper / Service / Controller 模板生成业务代码（详见 [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)）
+- **模块注册**：ModuleRegisterInitialize、菜单注册、工作流注册等实现请引用 [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
 - **配置管理**：公共服务配置和自动扫描配置（详见 [配置管理工具指南](BACKEND-TOOLS-CONFIGURATION.md)）
 - **数据库设计**：表结构设计和SQL脚本规范（详见 [数据库规范工具指南](BACKEND-TOOLS-DATABASE.md)）
 
+## 前序设计产物检查规则
+
+在开始后端代码实现前，必须优先寻找并读取前序设计阶段产物，不得在缺少关键输入时直接自由发挥生成。
+
+### 优先寻找的前序产物
+
+应优先检查以下文档是否存在：
+
+- `{功能名称}-需求详细设计.md`
+- `{功能名称}-后端架构设计.md`
+- `{功能名称}-API设计文档.md`
+
+### 最低输入要求
+
+- **最低要求**：至少存在一个 `{功能名称}-需求详细设计.md` 文档
+- 若同时存在后端架构设计文档和 API 设计文档，则后端实现必须严格优先依据这些产物输出
+
+### 缺失时的处理规则
+
+1. 若上述前序产物齐全，则直接依据需求详细设计、后端架构设计和 API 设计文档进行实现
+2. 若缺少部分文档，但至少存在 `{功能名称}-需求详细设计.md`，必须先向用户说明缺失了哪些前序产物，并询问是否允许基于现有文档进行合理发挥后再实现
+3. 若连 `{功能名称}-需求详细设计.md` 都不存在，则不得直接生成代码，必须先告知用户当前缺少最低必需文档，并询问是否允许在缺少需求详细设计的情况下自由发挥生成
+4. 无论是哪种缺失情况，只要用户未明确同意“自由发挥实现”，都不能继续生成后端代码
+
+### 标准确认提问话术
+
+#### 情况1：已有需求详细设计，但其他前序产物不完整
+
+我已找到以下前序设计产物：
+- `{已找到的文件列表}`
+
+当前仍缺少：
+- `{缺失的文件列表}`
+
+其中，`{功能名称}-需求详细设计.md` 已存在。请确认是否允许我基于现有文档，并对缺失部分进行合理发挥后继续生成后端代码？
+- 若回复 **允许**：我将基于现有产物继续实现
+- 若回复 **不允许**：请先补充缺失文档后我再继续
+
+#### 情况2：连最低必需文档都缺失
+
+当前未找到 `{功能名称}-需求详细设计.md`，这属于后端实现的最低必需输入文档。
+
+请确认是否允许我在缺少需求详细设计文档的情况下，根据已有上下文自由发挥生成后端代码？
+- 若回复 **允许**：我将按自由发挥方式继续实现，并明确标注基于假设生成
+- 若回复 **不允许**：请先提供 `{功能名称}-需求详细设计.md` 后我再继续
+
+## 关键标识来源与确认规则
+
+在开始后端代码生成前，必须先确认当前模块使用的 `moduleCode` 与 `acronym`。
+
+### 优先使用顺序
+
+1. **优先读取后端技术实现方案文档**：从 `{项目名称}-后端技术实现方案.md` 中查找已记录的 `moduleCode` 与 `acronym`
+2. **若设计文档中已记录**：也必须先向用户展示读取到的值并确认是否正确，确认无误后才能继续
+3. **若设计文档中未记录或缺失其一**：转为从当前项目 metadata 文件提取 `module.moduleCode` 与 `module.acronym`
+4. **若从 metadata 提取成功**：仍必须先向用户确认提取结果是否正确
+5. **若设计文档缺失、metadata 未提取到，或用户反馈不正确**：必须要求用户直接提供正确的 `moduleCode` 与 `acronym`
+6. **后续所有代码生成、目录命名、类名、接口名、注解参数、SQL 建表前缀**，都必须使用用户最终确认后的值
+
+### 标准确认提问话术
+
+#### 情况1：从设计文档或 metadata 中拿到了字段值
+
+请确认当前模块使用的关键标识信息是否正确：
+- `moduleCode`：`{已读取到的moduleCode}`
+- `acronym`：`{已读取到的acronym}`
+
+这两个值将用于后续后端代码生成、类命名、注解参数以及数据库建表相关内容。
+- 若回复 **正确**：我将继续使用这两个值
+- 若回复 **不正确**：请直接提供正确的 `moduleCode` 与 `acronym`
+
+#### 情况2：设计文档缺失且未能提取到字段值
+
+请确认当前模块的关键标识信息：
+- `moduleCode` 是什么？
+- `acronym` 是什么？
+
+我需要使用这两个值继续生成后端代码、命名类文件以及数据库建表相关内容。为避免生成错误，请确认后我再继续。
+
 ## 开发规范
 
-### Entity 开发规范
+### 业务代码模板使用规范
 
-#### 基础实体模板
-```java
-package com.supcon.nebule.{moduleCode}.custom.entity;
+后端业务逻辑实现中的 Entity、BO、VO、DAO、Mapper、Service、Controller 代码示例已统一抽取到 [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)。
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.supcon.nebule.fr.annotation.EnCodeField;
-import com.supcon.nebule.framework.common.annotation.audit.AuditModel;
-import com.supcon.nebule.framework.common.entity.AbstractConfigurationWorkflowEntity;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+在生成业务代码时，必须遵循以下约束：
 
-@Data
-@TableName("{tableName}")
-@EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
-@EnCodeField(module = "{moduleCode}", model = "{modelCode}", acronym="{acronym}", srcAcronym="")
-@AuditModel(module = "{moduleCode}", model = "{modelCode}")
-public class Custom{ModuleCode}{ModelCode}Entity extends AbstractConfigurationWorkflowEntity {
-
-    @ApiModelProperty("名称")
-    @TableField("name")
-    private String name;
-
-    @ApiModelProperty("编码")
-    @TableField("code")
-    private String code;
-
-    @ApiModelProperty("状态")
-    @TableField("status")
-    private String status;
-
-    @ApiModelProperty("备注")
-    @TableField("remark")
-    private String remark;
-}
-```
-
-> **详细规范请参考**: [数据库规范工具指南](BACKEND-TOOLS-DATABASE.md)
-
-#### BO 业务对象模板
-```java
-package com.supcon.nebule.{moduleCode}.custom.bo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
-@Data
-@EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
-public class Custom{ModuleCode}{ModelCode}BO extends Custom{ModuleCode}{ModelCode}BaseBO {
-
-    @ApiModelProperty("名称")
-    private String name;
-
-    @ApiModelProperty("编码")
-    private String code;
-
-    @ApiModelProperty("状态")
-    private String status;
-
-    @ApiModelProperty("备注")
-    private String remark;
-}
-```
-
-#### VO 视图对象模板
-```java
-package com.supcon.nebule.{moduleCode}.custom.vo;
-
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
-
-@Data
-@EqualsAndHashCode(callSuper = true)
-@Accessors(chain = true)
-public class Custom{ModuleCode}{ModelCode}VO extends Custom{ModuleCode}{ModelCode}BaseVO {
-
-    @ApiModelProperty("主键ID")
-    private Long id;
-
-    @ApiModelProperty("名称")
-    private String name;
-
-    @ApiModelProperty("编码")
-    private String code;
-
-    @ApiModelProperty("状态")
-    private String status;
-
-    @ApiModelProperty("备注")
-    private String remark;
-}
-```
-
-### DAO 开发规范
-
-#### 基础 DAO 接口
-```java
-package com.supcon.nebule.{moduleCode}.custom.dao;
-
-import com.supcon.nebule.{moduleCode}.custom.entity.Custom{ModuleCode}{ModelCode}Entity;
-import com.supcon.nebule.framework.common.dao.BaseDao;
-import org.apache.ibatis.annotations.Mapper;
-
-@Mapper
-public interface Custom{ModuleCode}{ModelCode}Dao extends BaseDao<Custom{ModuleCode}{ModelCode}Entity> {
-    // 继承BaseDao已包含基础的增删改查方法
-    // 可按需添加自定义查询方法
-}
-```
-
-### Service 开发规范
-
-#### Service 接口
-```java
-package com.supcon.nebule.{moduleCode}.custom.service;
-
-import com.supcon.nebule.{moduleCode}.custom.bo.Custom{ModuleCode}{ModelCode}BO;
-import com.supcon.nebule.{moduleCode}.custom.entity.Custom{ModuleCode}{ModelCode}Entity;
-import com.supcon.nebule.framework.common.service.IBaseService;
-
-public interface Custom{ModuleCode}{ModelCode}Service extends IBaseService<Custom{ModuleCode}{ModelCode}Entity> {
-
-    /**
-     * 保存业务对象
-     */
-    Long saveBO(Custom{ModuleCode}{ModelCode}BO bo);
-
-    /**
-     * 根据ID获取业务对象
-     */
-    Custom{ModuleCode}{ModelCode}BO getByIdBO(Long id);
-
-    /**
-     * 删除记录
-     */
-    Boolean delete(Long id);
-}
-```
-
-#### Service 实现
-```java
-package com.supcon.nebule.{moduleCode}.custom.service.impl;
-
-import com.supcon.nebule.{moduleCode}.custom.bo.Custom{ModuleCode}{ModelCode}BO;
-import com.supcon.nebule.{moduleCode}.custom.dao.Custom{ModuleCode}{ModelCode}Dao;
-import com.supcon.nebule.{moduleCode}.custom.entity.Custom{ModuleCode}{ModelCode}Entity;
-import com.supcon.nebule.{moduleCode}.custom.service.Custom{ModuleCode}{ModelCode}Service;
-import com.supcon.nebule.framework.common.service.BaseService;
-import com.supcon.nebule.framework.common.utils.PojoUtil;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
-
-@Service
-@Validated
-@Slf4j
-public class Custom{ModuleCode}{ModelCode}ServiceImpl extends BaseService<Custom{ModuleCode}{ModelCode}Dao, Custom{ModuleCode}{ModelCode}Entity>
-        implements Custom{ModuleCode}{ModelCode}Service {
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Long saveBO(Custom{ModuleCode}{ModelCode}BO bo) {
-        Custom{ModuleCode}{ModelCode}Entity entity = PojoUtil.copy(bo, Custom{ModuleCode}{ModelCode}Entity.class);
-        
-        if (bo.getId() == null) {
-            // 新增
-            this.save(entity);
-        } else {
-            // 更新
-            this.updateById(entity);
-        }
-        
-        return entity.getId();
-    }
-
-    @Override
-    public Custom{ModuleCode}{ModelCode}BO getByIdBO(Long id) {
-        Custom{ModuleCode}{ModelCode}Entity entity = this.getById(id);
-        return PojoUtil.copy(entity, Custom{ModuleCode}{ModelCode}BO.class);
-    }
-
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public Boolean delete(Long id) {
-        return this.removeById(id);
-    }
-}
-```
-
-### Controller 开发规范
-
-#### 基础 Controller
-```java
-package com.supcon.nebule.{moduleCode}.custom.controller;
-
-import com.supcon.nebule.{moduleCode}.custom.bo.Custom{ModuleCode}{ModelCode}BO;
-import com.supcon.nebule.{moduleCode}.custom.service.Custom{ModuleCode}{ModelCode}Service;
-import com.supcon.nebule.{moduleCode}.custom.vo.Custom{ModuleCode}{ModelCode}VO;
-import com.supcon.nebule.framework.common.annotation.audit.AuditLog;
-import com.supcon.nebule.framework.common.annotation.nullupdate.ModifiedSerialization;
-import com.supcon.nebule.framework.common.utils.PojoUtil;
-import com.supcon.supfusion.framework.cloud.annotation.InternalApi;
-import com.supcon.supfusion.framework.cloud.common.constants.HttpConstants;
-import com.supcon.supfusion.framework.cloud.common.result.Result;
-import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-@RestController
-@InternalApi(path = HttpConstants.URL_SPLITER + "{moduleCode}" + HttpConstants.URL_SPLITER + "{modelCodeLower}")
-public class Custom{ModuleCode}{ModelCode}Controller {
-
-    @Autowired
-    private Custom{ModuleCode}{ModelCode}Service service;
-
-    @PostMapping("/save")
-    @ApiOperation("保存记录")
-    @ModifiedSerialization
-    @AuditLog
-    public Result<Long> save(@RequestBody Custom{ModuleCode}{ModelCode}VO vo) {
-        Custom{ModuleCode}{ModelCode}BO bo = PojoUtil.copy(vo, Custom{ModuleCode}{ModelCode}BO.class);
-        return Result.success(service.saveBO(bo));
-    }
-
-    @GetMapping("/info")
-    @ApiOperation("根据ID获取")
-    public Result<Custom{ModuleCode}{ModelCode}VO> getById(@RequestParam("id") Long id) {
-        Custom{ModuleCode}{ModelCode}BO bo = service.getByIdBO(id);
-        return Result.success(PojoUtil.copy(bo, Custom{ModuleCode}{ModelCode}VO.class));
-    }
-
-    @PostMapping("/delete")
-    @ApiOperation("删除记录")
-    @AuditLog
-    public Result<Boolean> delete(@RequestParam("id") Long id) {
-        return Result.success(service.delete(id));
-    }
-}
-```
+1. 先根据需求详细设计、后端架构设计和 API 设计文档确认模型职责
+2. 再使用 [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md) 中的模板替换占位符生成代码
+3. 所有包名、类名、注解参数、接口路径前缀，都必须使用用户最终确认后的 `moduleCode` 与 `acronym`
+4. 若当前功能除业务代码外还涉及模块初始化、菜单、工作流注册，则模块注册部分必须引用 `cds-product-design-zh` 中的 [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
 
 ### 配置类开发规范
 
+> **详细业务代码模板请参考**: [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)
 > **详细配置说明请参考**: [配置管理工具指南](BACKEND-TOOLS-CONFIGURATION.md)
-> **详细注册机制请参考**: [模块注册工具指南](BACKEND-TOOLS-MODULE-REGISTER.md)
+> **详细注册机制请参考**: [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
 
 ## 数据库开发规范
 
@@ -310,17 +148,15 @@ public class Custom{ModuleCode}{ModelCode}Controller {
 ```json
 // 成功响应
 {
-    "success": true,
-    "errorCode": null,
-    "errorMessage": null,
-    "data": 123
+    "code": 100000000,
+    "message": "操作成功",
+    "data": "V1.02.02.12-26011915-M\n"
 }
 
 // 失败响应
 {
-    "success": false,
-    "errorCode": "SYSTEM_ERROR",
-    "errorMessage": "系统异常",
+    "code": 500000000,
+    "message": "系统异常",
     "data": null
 }
 ```
@@ -366,13 +202,16 @@ mvn checkstyle:check
 ```
 
 ### 2. 开发步骤
-1. **阅读技术方案**：理解需求和设计规范
-2. **创建数据库表**：执行SQL初始化脚本
-3. **生成基础代码**：创建Entity、DAO、Service、Controller
-4. **实现业务逻辑**：编写核心业务代码
-5. **添加配置类**：配置扫描和模块注册
-6. **代码审查**：检查代码质量和规范
-7. **测试验证**：确保功能正确性
+1. **检查前序产物**：优先查找 `{功能名称}-需求详细设计.md`、`{功能名称}-后端架构设计.md`、`{功能名称}-API设计文档.md`
+2. **确认是否可继续实现**：若文档不完整，至少确认是否存在 `{功能名称}-需求详细设计.md`；若有缺失，必须先询问用户是否允许基于现有资料合理发挥
+3. **阅读技术方案**：理解需求、后端架构设计和 API 设计规范，并优先从后端技术实现方案文档中读取 `moduleCode` 与 `acronym`
+4. **确认关键标识**：将读取或提取到的 `moduleCode`、`acronym` 展示给用户确认；若文档缺失则转为从当前项目 metadata 提取，若仍缺失或用户反馈错误，则要求用户提供正确值
+5. **创建数据库表**：基于用户最终确认的关键标识执行SQL初始化脚本
+6. **生成基础代码**：基于确认后的 `moduleCode`、`acronym` 创建Entity、DAO、Service、Controller
+7. **实现业务逻辑**：编写核心业务代码
+8. **添加配置类**：配置扫描和模块注册
+9. **代码审查**：检查代码质量和规范
+10. **测试验证**：确保功能正确性
 
 ### 3. 代码提交
 - 遵循 Git 提交规范
@@ -412,16 +251,18 @@ mvn checkstyle:check
 | 工具文档 | 用途 | 使用场景 |
 |---------|------|----------|
 | [项目结构工具指南](BACKEND-TOOLS-PROJECT-STRUCTURE.md) | CDS项目目录结构和模块划分 | 新建项目、理解项目结构时 |
+| [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md) | Entity / BO / VO / DAO / Mapper / Service / Controller 业务代码模板 | 后端业务逻辑代码生成时 |
 | [配置管理工具指南](BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 | 配置类开发、包扫描配置时 |
 | [数据库规范工具指南](BACKEND-TOOLS-DATABASE.md) | 数据库设计和SQL脚本规范 | 数据库设计、表结构创建时 |
-| [模块注册工具指南](BACKEND-TOOLS-MODULE-REGISTER.md) | 模块注册、菜单注册、工作流注册 | 模块初始化、系统集成时 |
+| [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 模块注册、菜单注册、工作流注册 | 模块初始化、系统集成时 |
 
 ### 使用建议
 
 1. **新手入门**: 先阅读项目结构工具指南，理解整体架构
-2. **配置开发**: 参考配置管理工具指南，正确配置扫描和注册
-3. **数据库设计**: 使用数据库规范工具指南，确保表结构规范
-4. **模块集成**: 查看模块注册工具指南，完成系统注册配置
+2. **业务实现**: 先参考后端业务代码生成工具指南，生成 Entity / DAO / Service / Controller 等基础代码
+3. **配置开发**: 参考配置管理工具指南，正确配置扫描和注册
+4. **数据库设计**: 使用数据库规范工具指南，确保表结构规范
+5. **模块集成**: 查看模块注册工具指南，完成系统注册配置
 
 ### 工具文档特点
 
