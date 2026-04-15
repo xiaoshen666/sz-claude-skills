@@ -16,44 +16,57 @@
 
 ## 概述
 
-CDS产品设计技能是一个完整的企业级产品设计解决方案，基于VibeLockDsn的设计方法论构建，专门为CDS（Content Delivery System）平台优化。该技能提供了从需求分析到原型设计的完整流程支持。
+CDS产品设计技能是一个专注于页面功能级别设计的解决方案，基于VibeLockDsn的设计方法论构建，专门为CDS（Content Delivery System）平台优化。该技能提供了从需求概要文档到页面UI稿、前端架构设计、后端架构设计的完整流程支持。
 
 ### 🎯 核心定位
 
-- **CDS平台专用**：专门为CDS平台设计的产品设计工具
-- **企业级标准**：提供企业级的设计规范和组件库
-- **全流程覆盖**：从需求概设到详细设计的完整流程
+- **页面功能级别设计**：专注于单个页面功能的设计，而非多模块系统设计
+- **需求驱动**：必须基于用户提供的需求概要文档开始设计
+- **前后端分离设计**：前端架构设计和后端架构设计分别输出，独立文档
+- **UI稿自动生成**：基于CDS UI库自动生成页面UI稿
 - **质量保证**：集成测试验收机制确保设计质量
 
 ## 核心能力
 
-### 1. 需求分析能力 📊
-- ✅ 从需求概设到需求详细设计的完整流程
-- ✅ CDS特定需求的专门分析
+### 1. 需求驱动设计 📊
+- ✅ 必须基于用户提供的需求概要文档开始设计
+- ✅ 从需求概要到页面需求详细设计的完整流程
+- ✅ 页面功能级别的专门分析
 - ✅ 标准化的需求文档输出
-- ✅ 端及角色、需求清单的规范化管理
 
-### 2. 设计规范支持 🎨
+### 2. 页面功能级别设计 🎯
+- ✅ 专注于单个页面功能的设计，而非多模块系统设计
+- ✅ 页面业务流程图和交互逻辑说明
+- ✅ 页面数据架构设计和实体字段表
+- ✅ 页面功能清单的规范化管理
+
+### 3. UI稿自动生成 ✏️
+- ✅ 基于CDS UI库自动生成页面UI稿
+- ✅ 输出命名为"xxxx页面UI稿.pen"的标准格式
+- ✅ 标准化设计规范遵循
+- ✅ UI设计规范文档生成
+
+### 4. 前后端分离架构设计 🏗️
+- ✅ 前端架构设计：{页面名称}前端架构设计.md、组件设计文档
+- ✅ 后端架构设计：{页面名称}后端架构设计.md、API设计文档
+- ✅ 前后端架构资料分离输出，独立文档
+- ✅ 专门的前端架构师和后端架构师能力支持
+
+### 5. 设计规范支持 🎨
 - ✅ 完整的CDS设计规范体系
 - ✅ 专业的蓝白配色方案
 - ✅ 标准化的组件库和样式指南
 - ✅ 平台兼容性保证
 
-### 3. UI库自动支持 🔧
+### 6. UI库自动支持 🔧
 - ✅ 开箱即用的默认UI库
 - ✅ 12个核心组件覆盖所有场景
 - ✅ 自动检测和复制机制
 - ✅ 标准化组件使用
 
-### 4. 原型设计能力 ✏️
-- ✅ 基于CDS组件库的原型绘制
-- ✅ 标准化设计规范遵循
-- ✅ 原型调整同步机制
-- ✅ 实时质量检查
-
-### 5. 测试验收集成 ✅
+### 7. 测试验收集成 ✅
 - ✅ 设计阶段的多层次检查
-- ✅ 原型绘制的实时监督
+- ✅ 设计验收检查流程
 - ✅ 问题闭环处理机制
 - ✅ 完整的验收流程
 
@@ -180,40 +193,88 @@ TopNavigation + Sidebar + StatisticCard + Progress + DataTable + Tag
 
 ## 使用流程
 
-### 完整的产品开发流程
+### 页面功能设计流程
 
-#### 1. 需求分析阶段
+#### 1. 需求概要文档确认阶段
 ```
-cds-product-design-zh → REQ-ANALYSIS.md
+用户必须提供需求概要文档
 ↓
-需求详细设计文档
+cds-product-design-zh → REQ-CONFIRM.md
 ↓
-cds-product-test-zh → CDS-GLOBAL-CHECK.md
-```
-
-#### 2. 设计实现阶段
-```
-cds-product-design-zh → DESIGN-LIB.md
-↓
-CDS设计组件库（自动使用默认UI库）
-↓
-cds-product-design-zh → DESIGN.md
-↓
-原型设计 → cds-product-test-zh → CDS-PROTOTYPE-CHECK.md
+需求概要确认书、设计任务初始化
 ```
 
-#### 3. 开发测试阶段
+#### 2. 需求详细设计阶段
+```
+cds-product-design-zh → REQ-DETAIL.md
+↓
+页面需求详细设计文档、功能清单表
+```
+
+#### 3. 数据架构设计阶段
+```
+cds-product-design-zh → DATA.md + BACKEND-TOOLS-DATABASE.md
+↓
+实体字段表、数据关系图
+```
+
+#### 4. 业务流程设计阶段
+```
+cds-product-design-zh → PROCESS.md + BACKEND-TOOLS-*.md
+↓
+页面业务流程图、交互逻辑说明
+```
+
+#### 5. UI稿生成阶段
+```
+cds-product-design-zh → UI-DESIGN.md + DESIGN-LIB.md
+↓
+检查项目根目录是否存在UI库文件
+如果不存在则从 references/ui/ 拷贝默认UI库
+↓
+{页面名称}UI稿.pen、UI设计规范.md
+```
+
+#### 6. 前端架构设计阶段
+```
+cds-product-design-zh → FRONTEND-ARCH.md + FRONTEND-TOOLS-PROJECT-STRUCT.md
+↓
+{页面名称}前端架构设计.md、组件设计文档
+```
+
+#### 7. 后端架构设计阶段
+```
+cds-product-design-zh → BACKEND-ARCH.md + BACKEND-TOOLS-*.md
+↓
+{页面名称}后端架构设计.md、API设计文档
+```
+
+#### 8. 设计验收检查阶段
+```
+cds-product-design-zh → DESIGN-REVIEW.md
+↓
+设计检查报告.md
+↓
+cds-product-test-zh → 设计检查验收
+```
+
+### 后续开发流程
+
+#### 9. 开发实现阶段
 ```
 cds-product-develop-zh
 ↓
-代码生成
-↓
+基于UI稿和技术方案的代码生成
+```
+
+#### 10. 测试验证阶段
+```
 cds-product-test-zh → 编译启动测试
 ↓
 cds-product-test-zh → 功能测试
 ```
 
-#### 4. 部署运维阶段
+#### 11. 部署运维阶段
 ```
 cds-product-devops-zh
 ↓
@@ -244,6 +305,24 @@ cds-product-devops-zh
 - 多层次的质量检查点
 - 完整的验收标准
 
+#### 5. 设计文档统一管理
+- 自动创建 design-docs 文件夹
+- 所有设计产物统一保存到 design-docs
+- 与 dsg-session.md 保持同级目录结构
+- 便于设计文档的版本管理和追溯
+
+#### 6. 前后端工具链集成
+- 前端架构设计参考 FRONTEND-TOOLS-PROJECT-STRUCT.md
+- 后端架构设计参考 BACKEND-TOOLS-*.md 系列文档
+- 数据架构设计参考 BACKEND-TOOLS-DATABASE.md
+- 业务流程设计参考 BACKEND-TOOLS-*.md 系列文档
+
+#### 7. UI库自动拷贝机制
+- 在UI稿生成阶段自动检查项目根目录是否存在 .lib.pen 和 design-libraries-readme.md
+- 如果不存在，自动从 references/ui/ 目录拷贝 cds-components.lib.pen 和 cds-design-libraries-readme.md
+- 确保新项目能快速使用CDS标准UI库进行原型设计
+- 支持自定义UI库的优先级（项目本地UI库 > 默认UI库）
+
 ## 技能架构
 
 ### 文件结构
@@ -251,12 +330,17 @@ cds-product-devops-zh
 cds-product-design-zh/
 ├── SKILL.md                              # 技能主文档
 └── references/
-    ├── TASK-MANAGEMENT.md                # 任务管理指南
-    ├── REQ-ANALYSIS.md                   # 需求分析指南
-    ├── DESIGN-LIB.md                     # 设计库准备指南
-    ├── DESIGN.md                         # 原型设计指南
-    ├── FRONTEND-ARCH.md                  # 前端技术方案指南
-    ├── BACKEND-ARCH.md                   # 后端技术方案指南
+    ├── TASK-MANAGEMENT.md                # 任务进度管理指南
+    ├── REQ-ANALYSIS.md                   # 需求详细设计整理指南
+    ├── REQ-CONFIRM.md                    # 需求概要文档确认指南
+    ├── REQ-DETAIL.md                     # 页面需求详细设计指南
+    ├── DESIGN-LIB.md                     # UI库适配与组件准备指南
+    ├── DATA.md                           # 数据架构设计指南
+    ├── PROCESS.md                        # 业务流程设计指南
+    ├── UI-DESIGN.md                      # UI稿生成指南
+    ├── FRONTEND-ARCH.md                  # 前端架构设计指南
+    ├── BACKEND-ARCH.md                   # 后端架构设计指南
+    ├── DESIGN-REVIEW.md                  # 设计验收检查指南
     └── ui/
         ├── cds-components.lib.pen        # CDS组件库文件
         ├── cds-design-libraries-readme.md # CDS设计规范
@@ -269,7 +353,6 @@ cds-product-design-zh/
 |------|----------|------|
 | 设计检查验收 | cds-product-test-zh | 设计完成后调用 |
 | 技术方案评审 | cds-product-test-zh | 技术方案完成后调用 |
-| 原型检查监督 | cds-product-test-zh | 原型绘制过程中调用 |
 
 ## 优势总结
 
