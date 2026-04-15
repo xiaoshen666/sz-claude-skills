@@ -75,8 +75,8 @@ END IF
 | 2 | 数据架构设计 | DATA.md + BACKEND-TOOLS-DATABASE.md | 实体字段表、数据关系图 |
 | 3 | 业务流程设计 | PROCESS.md + BACKEND-TOOLS-*.md | 页面业务流程图、交互逻辑说明 |
 | 4 | UI稿生成 | UI-DESIGN.md + DESIGN-LIB.md | {页面名称}UI稿.pen |
-| 5 | 前端架构设计 | FRONTEND-ARCH.md + FRONTEND-TOOLS-PROJECT-STRUCT.md | {页面名称}前端架构设计.md、组件设计文档 |
-| 6 | 后端架构设计 | BACKEND-ARCH.md + BACKEND-TOOLS-*.md | {页面名称}后端架构设计.md、API设计文档 |
+| 5 | 前端架构设计 | FRONTEND-ARCH.md + FRONTEND-TOOLS-PROJECT-STRUCT.md | {页面名称}前端架构设计.md、组件设计文档.md |
+| 6 | 后端架构设计 | BACKEND-ARCH.md + BACKEND-TOOLS-*.md | {页面名称}后端架构设计.md、{页面名称}API设计文档.md |
 | 7 | 设计验收检查 | DESIGN-REVIEW.md | 设计检查报告.md |
 
 ## 步骤执行规范
@@ -141,11 +141,10 @@ END IF
 - **工具库**：ahooks 3.7.7, axios 1.4.0, dayjs 1.11.7
 
 ### 核心能力
-1. **CDS组件库精通**：熟练使用CdsInput、CdsButton、CdsTable等20+核心组件
-2. **项目架构设计**：基于cds-template脚手架的标准项目结构设计
+2. **项目架构设计**：React + antD 的标准项目结构设计
 3. **路由配置**：React Router v6路由规范配置
 4. **状态管理**：React Hooks + ahooks的现代化状态管理
-5. **API集成**：基于@cds/utils/request的统一请求封装
+5. **API集成**：基于utils/request的统一请求封装
 6. **国际化**：多语言支持方案设计
 7. **性能优化**：代码分割、懒加载、缓存策略
 
@@ -192,4 +191,3 @@ END IF
 |------|----------|------|
 | 设计检查验收 | cds-product-test-zh | 设计完成后调用 |
 | 技术方案评审 | cds-product-test-zh | 技术方案完成后调用 |
-| 前端代码实现 | sz-08frontend-architect | 技术方案完成后调用前端架构师进行代码生成 |
