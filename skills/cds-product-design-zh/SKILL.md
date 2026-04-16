@@ -75,9 +75,9 @@ END IF
 | 1 | 需求详细设计 | REQ-DETAIL.md | 页面需求详细设计文档、功能清单表 |
 | 2 | 数据架构设计 | DATA.md + BACKEND-TOOLS-DATABASE.md | 实体字段表、数据关系图 |
 | 3 | 业务流程设计 | PROCESS.md + BACKEND-TOOLS-*.md | 页面业务流程图、交互逻辑说明 |
-| 4 | UI稿生成 | UI-DESIGN.md + DESIGN-LIB.md | {页面名称}UI稿.pen |
-| 5 | 前端架构设计 | FRONTEND-ARCH.md + FRONTEND-TOOLS-PROJECT-STRUCT.md | {页面名称}前端架构设计.md、组件设计文档.md |
-| 6 | 后端架构设计 | BACKEND-ARCH.md + BACKEND-TOOLS-*.md | {页面名称}后端架构设计.md、{页面名称}API设计文档.md |
+| 4 | UI稿生成 | UI-DESIGN.md + DESIGN-LIB.md | {功能名称}UI稿.pen |
+| 5 | 前端架构设计 | FRONTEND-ARCH.md + FRONTEND-TOOLS-PROJECT-STRUCT.md | {功能名称}前端架构设计.md、组件设计文档.md |
+| 6 | 后端架构设计 | BACKEND-ARCH.md + BACKEND-TOOLS-*.md | {功能名称}后端架构设计.md、{功能名称}-API设计文档.md |
 | 7 | 设计验收检查 | DESIGN-REVIEW.md | 设计检查报告.md |
 
 ### 可选阶段跳过机制
