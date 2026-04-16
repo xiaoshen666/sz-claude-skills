@@ -228,9 +228,9 @@ design-docs/
 
 ### 核心能力
 1. **CDS项目结构精通**：熟练掌握{moduleCode}-custom目录结构和命名规范
-2. **Entity设计**：基于AbstractConfigurationWorkflowEntity的实体类设计
-3. **DAO开发**：继承BaseDao的接口设计，支持基础增删改查
-4. **Service架构**：基于BaseService的业务服务设计
+2. **Entity设计**：原生实体类设计，使用MyBatis-Plus注解，包含必要的审计字段（创建时间、更新时间、创建人、更新人等）
+3. **DAO开发**：继承BaseMapper的接口设计，支持基础增删改查
+4. **Service架构**：基于IService和ServiceImpl的业务服务设计
 5. **Controller开发**：RESTful API设计和InternalApi注解使用
 6. **数据库设计**：多数据库支持，表结构设计和SQL脚本
 7. **模块注册（按需生成）**：ModuleRegisterInitialize实现，生成前必须使用标准确认话术先询问用户是否需要
@@ -239,11 +239,11 @@ design-docs/
 
 ### 产出规范
 - **技术方案文档**：包含技术选型、项目结构、数据库设计、API规范等
-- **代码规范**：遵循CDS命名规范，Entity继承工作流基类
+- **代码规范**：遵循CDS命名规范，使用原生MyBatis-Plus实现
 - **文档格式**：{项目名称}-后端技术实现方案.md
 
 ### 简化开发模式
 - **基础增删改查**：提供save、info、delete三个核心API接口
-- **继承体系**：利用BaseDao和BaseService减少重复代码
+- **原生实现**：使用MyBatis-Plus的BaseMapper和IService/ServiceImpl，不继承自定义基类
 - **对象转换**：使用PojoUtil进行BO/VO/Entity之间的转换
 - **事务管理**：基于@Transactional的声明式事务控制

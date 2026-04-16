@@ -216,7 +216,7 @@
 ### API规范性检查
 
 | 检查项 | 规范要求 | 实际实现 | 是否符合 | 问题描述 |
-|--------|---------|---------|---------|---------|
+|--------|---------|---------|---------|---------|  
 | URL规范 | 使用/{moduleCode}/前缀 | 使用前缀 | ✅ 符合 | - |
 | 请求方法 | GET/POST正确使用 | 正确使用 | ✅ 符合 | - |
 | 参数校验 | 使用@Valid校验 | 部分使用 | ⚠️ 部分 | 部分接口缺少校验 |
@@ -224,7 +224,212 @@
 | 返回值 | 使用Result包装 | 使用Result | ✅ 符合 | - |
 ```
 
-### 步骤7：生成检查报告
+### 步骤7：检查Service-DAO-Mapper调用链路完整性
+
+> **重要说明**：此步骤检查后端代码的调用链路是否完整，确保Controller调用的Service方法在Service接口中有声明，Service实现类中有实现，Service调用的DAO方法在DAO接口中有声明，Mapper XML中有对应的SQL实现。
+
+#### 7.1 Controller → Service 调用检查
+
+**检查规则**：
+1. 查找Controller中所有调用的Service方法
+2. 验证这些方法在Service接口中是否有声明
+3. 验证这些方法在ServiceImpl实现类中是否有实现
+
+```markdown
+### Controller → Service 调用链路检查
+
+| Controller类 | 调用的Service方法 | Service接口声明 | ServiceImpl实现 | 是否完整 | 问题描述 |
+|-------------|------------------|----------------|----------------|---------|---------|
+| UserController | saveBO(bo) | ✅ 有声明 | ✅ 有实现 | ✅ 完整 | - |
+| UserController | updateBO(bo) | ✅ 有声明 | ✅ 有实现 | ✅ 完整 | - |
+| UserController | getByIdBO(id) | ✅ 有声明 | ✅ 有实现 | ✅ 完整 | - |
+| UserController | listBO(bo) | ✅ 有声明 | ❌ 无实现 | ❌ 不完整 | ServiceImpl缺少listBO实现 |
+| UserController | delete(id) | ❌ 无声明 | - | ❌ 不完整 | Service接口缺少delete声明 |
+```
+
+**检查步骤**：
+
+1. **提取Controller中的Service调用**：
+```java
+// UserController.java
+public Result<Long> save(@RequestBody CustomUserManagementDTO dto) {
+    CustomUserManagementBO bo = PojoUtil.copy(dto, CustomUserManagementBO.class);
+    return Result.success(customUserManagementService.saveBO(bo)); // ← 提取 saveBO
+}
+```
+
+2. **验证Service接口声明**：
+```java
+// UserService.java
+public interface CustomUserManagementService {
+    Long saveBO(CustomUserManagementBO bo); // ✅ 有声明
+    Boolean updateBO(CustomUserManagementBO bo);
+    CustomUserManagementBO getByIdBO(Long id);
+    // ❌ 缺少 listBO 声明
+    // ❌ 缺少 delete 声明
+}
+```
+
+3. **验证ServiceImpl实现**：
+```java
+// UserServiceImpl.java
+@Service
+public class CustomUserManagementServiceImpl implements CustomUserManagementService {
+    
+    @Override
+    public Long saveBO(CustomUserManagementBO bo) { // ✅ 有实现
+        // 实现代码
+    }
+    
+    @Override
+    public Boolean updateBO(CustomUserManagementBO bo) { // ✅ 有实现
+        // 实现代码
+    }
+    
+    @Override
+    public CustomUserManagementBO getByIdBO(Long id) { // ✅ 有实现
+        // 实现代码
+    }
+    
+    // ❌ 缺少 listBO 实现
+    // ❌ 缺少 delete 实现
+}
+```
+
+#### 7.2 Service → DAO 调用检查
+
+**检查规则**：
+1. 查找ServiceImpl中所有调用的DAO方法
+2. 验证这些方法在DAO接口中是否有声明
+3. 验证这些方法在Mapper XML中是否有对应的SQL实现
+
+```markdown
+### Service → DAO 调用链路检查
+
+| ServiceImpl类 | 调用的DAO方法 | DAO接口声明 | Mapper XML实现 | 是否完整 | 问题描述 |
+|--------------|--------------|------------|---------------|---------|---------|
+| UserServiceImpl | insert(entity) | ✅ 有声明 | ✅ 有SQL | ✅ 完整 | - |
+| UserServiceImpl | updateById(entity) | ✅ 有声明 | ✅ 有SQL | ✅ 完整 | - |
+| UserServiceImpl | selectById(id) | ✅ 有声明 | ✅ 有SQL | ✅ 完整 | - |
+| UserServiceImpl | selectList(query) | ✅ 有声明 | ❌ 无SQL | ❌ 不完整 | Mapper XML缺少selectList SQL |
+| UserServiceImpl | deleteById(id) | ❌ 无声明 | - | ❌ 不完整 | DAO接口缺少deleteById声明 |
+```
+
+**检查步骤**：
+
+1. **提取ServiceImpl中的DAO调用**：
+```java
+// UserServiceImpl.java
+@Override
+public Long saveBO(CustomUserManagementBO bo) {
+    CustomUserManagementEntity entity = PojoUtil.copy(bo, CustomUserManagementEntity.class);
+    customUserManagementDAO.insert(entity); // ← 提取 insert
+    return entity.getId();
+}
+
+@Override
+public CustomUserManagementBO getByIdBO(Long id) {
+    CustomUserManagementEntity entity = customUserManagementDAO.selectById(id); // ← 提取 selectById
+    return PojoUtil.copy(entity, CustomUserManagementBO.class);
+}
+```
+
+2. **验证DAO接口声明**：
+```java
+// UserDAO.java
+public interface CustomUserManagementDAO extends BaseMapper<CustomUserManagementEntity> {
+    // insert 继承自 BaseMapper ✅
+    // selectById 继承自 BaseMapper ✅
+    
+    // ❌ 缺少 selectList 声明
+    // ❌ 缺少 deleteById 声明
+}
+```
+
+3. **验证Mapper XML实现**：
+```xml
+<!-- UserDAO.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.supcon.nebule.usermanagement.custom.dao.CustomUserManagementDAO">
+    
+    <!-- insert 继承自 BaseMapper，无需编写 ✅ -->
+    <!-- selectById 继承自 BaseMapper，无需编写 ✅ -->
+    
+    <!-- ❌ 缺少 selectList 的 SQL -->
+    <!-- ❌ 缺少 deleteById 的 SQL -->
+    
+</mapper>
+```
+
+#### 7.3 完整调用链路追踪
+
+**链路示例**：
+
+```markdown
+### 完整调用链路示例：保存用户功能
+
+Controller → Service → DAO → Mapper XML
+
+1. **Controller层**：UserController.save()
+   ```java
+   @PostMapping("/save")
+   public Result<Long> save(@RequestBody CustomUserManagementDTO dto) {
+       CustomUserManagementBO bo = PojoUtil.copy(dto, CustomUserManagementBO.class);
+       return Result.success(customUserManagementService.saveBO(bo)); // 调用 saveBO
+   }
+   ```
+
+2. **Service接口**：UserService.saveBO()
+   ```java
+   Long saveBO(CustomUserManagementBO bo); // ✅ 有声明
+   ```
+
+3. **Service实现**：UserServiceImpl.saveBO()
+   ```java
+   @Override
+   public Long saveBO(CustomUserManagementBO bo) {
+       CustomUserManagementEntity entity = PojoUtil.copy(bo, CustomUserManagementEntity.class);
+       customUserManagementDAO.insert(entity); // 调用 insert
+       return entity.getId();
+   }
+   ```
+
+4. **DAO接口**：UserDAO.insert()
+   ```java
+   // 继承自 BaseMapper<CustomUserManagementEntity>
+   int insert(T entity); // ✅ 有声明（继承）
+   ```
+
+5. **Mapper XML**：UserDAO.xml
+   ```xml
+   <!-- insert 由 MyBatis-Plus 自动实现，无需编写 ✅ -->
+   ```
+
+**链路完整性**：✅ 完整
+```
+
+#### 7.4 调用链路问题汇总
+
+```markdown
+### 调用链路问题汇总
+
+| 序号 | 功能 | 问题位置 | 问题描述 | 严重程度 | 修复建议 |
+|------|------|---------|---------|---------|---------|
+| 1 | 查询列表 | ServiceImpl | UserServiceImpl缺少listBO方法实现 | 高 | 添加listBO实现 |
+| 2 | 删除用户 | Service接口 | Service接口缺少delete方法声明 | 高 | 添加delete声明 |
+| 3 | 查询列表 | Mapper XML | Mapper XML缺少selectList的SQL | 高 | 编写selectList SQL |
+| 4 | 删除用户 | DAO接口 | DAO接口缺少deleteById方法声明 | 高 | 添加deleteById声明 |
+| 5 | 批量删除 | Controller | Controller调用了batchDelete但Service未实现 | 中 | 补充完整链路 |
+
+**问题统计**：
+- 高严重程度：X个（导致编译错误或运行时异常）
+- 中严重程度：X个（功能不完整）
+- 低严重程度：X个（代码规范问题）
+- 总计：X个
+```
+
+### 步骤8：生成检查报告
 
 **输出位置**：`design-docs/testing-validation/`
 
@@ -257,6 +462,9 @@
 | 配置初始化 | X | X | X | X% |
 | API接口完整性 | X | X | X | X% |
 | API规范性 | X | X | X | X% |
+| **Controller→Service调用链路** | **X** | **X** | **X** | **X%** |
+| **Service→DAO调用链路** | **X** | **X** | **X** | **X%** |
+| **Mapper SQL实现** | **X** | **X** | **X** | **X%** |
 | **总计** | **X** | **X** | **X** | **X%** |
 
 ## 详细检查结果
@@ -281,6 +489,26 @@
 
 （插入步骤6的检查表格）
 
+### 调用链路完整性检查
+
+（插入步骤7的检查表格）
+
+#### Controller → Service 调用链路
+
+（插入步骤7.1的检查表格）
+
+#### Service → DAO 调用链路
+
+（插入步骤7.2的检查表格）
+
+#### 完整调用链路示例
+
+（插入步骤7.3的链路示例）
+
+#### 调用链路问题汇总
+
+（插入步骤7.4的问题汇总）
+
 ## 发现的问题
 
 | 序号 | 问题类型 | 问题描述 | 严重程度 | 修复建议 | 状态 |
@@ -289,6 +517,8 @@
 | 2 | 注解缺失 | CustomRoleManagementEntity 缺少 @EnCodeField | 高 | 添加注解 | 待修复 |
 | 3 | 初始化不完整 | 缺少工作流注册 | 中 | 补充工作流注册 | 待修复 |
 | 4 | API缺失 | 更新用户接口未实现 | 高 | 实现更新接口 | 待修复 |
+| 5 | **调用链路不完整** | UserServiceImpl缺少listBO方法实现 | 高 | 添加listBO实现 | 待修复 |
+| 6 | **调用链路不完整** | Mapper XML缺少selectList的SQL | 高 | 编写selectList SQL | 待修复 |
 
 **问题统计**：
 - 高严重程度：X个
@@ -305,6 +535,9 @@
 - **注解使用**：✅ 通过 / ❌ 不通过
 - **初始化语句**：✅ 通过 / ❌ 不通过
 - **API实现**：✅ 通过 / ❌ 不通过
+- **Controller→Service调用链路**：✅ 完整 / ❌ 不完整
+- **Service→DAO调用链路**：✅ 完整 / ❌ 不完整
+- **Mapper SQL实现**：✅ 完整 / ❌ 不完整
 
 ### 修复建议
 

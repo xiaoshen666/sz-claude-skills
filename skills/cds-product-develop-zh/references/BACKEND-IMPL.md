@@ -220,10 +220,11 @@ mvn checkstyle:check
 ## 最佳实践
 
 ### 实体设计原则
-1. **继承基类**：继承 AbstractConfigurationWorkflowEntity
-2. **注解完整**：添加必要的 MyBatis-Plus 和 CDS 注解
-3. **字段规范**：遵循数据库字段命名规范
-4. **类型安全**：使用合适的 Java 类型
+1. **原生实现**：不继承任何基类，使用MyBatis-Plus注解独立实现
+2. **注解完整**：添加必要的 MyBatis-Plus 注解（@TableName、@TableId、@TableField等）
+3. **审计字段**：包含创建时间、更新时间、创建人、更新人等审计字段
+4. **字段规范**：遵循数据库字段命名规范
+5. **类型安全**：使用合适的 Java 类型
 
 ### 服务设计原则
 1. **单一职责**：每个 Service 只负责一个业务领域
