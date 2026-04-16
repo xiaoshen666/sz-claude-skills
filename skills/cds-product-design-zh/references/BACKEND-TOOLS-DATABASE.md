@@ -494,62 +494,6 @@ GRANT CONNECT, RESOURCE TO {moduleCode};
 4. **回滚机制**：DBP 框架会在脚本执行失败时自动回滚，确保数据库状态一致
 5. **日志记录**：DBP 框架会记录每次执行的脚本版本和执行结果，便于问题排查
 
-## 数据库维护
-
-### 日常维护任务
-
-#### 统计信息收集
-```sql
--- Oracle
-EXEC DBMS_STATS.GATHER_TABLE_STATS('SCHEMA_NAME', 'TABLE_NAME');
-
--- MySQL
-ANALYZE TABLE table_name;
-```
-
-#### 索引重建
-```sql
--- Oracle
-ALTER INDEX index_name REBUILD;
-
--- MySQL
-ALTER TABLE table_name DROP INDEX index_name, ADD INDEX index_name (column_name);
-```
-
-#### 表空间监控
-```sql
--- 检查表空间使用情况
-SELECT tablespace_name, 
-       ROUND(SUM(bytes)/1024/1024,2) "Size(MB)",
-       ROUND(SUM(bytes)/1024/1024 - SUM(decode(maxbytes,0,bytes,maxbytes))/1024/1024,2) "Used(MB)"
-FROM dba_data_files 
-GROUP BY tablespace_name;
-```
-
-### 性能监控
-
-#### 慢查询监控
-```sql
--- Oracle
-SELECT sql_id, executions, elapsed_time/1000000 elapsed_seconds,
-       sql_text
-FROM v$sql 
-WHERE elapsed_time/1000000 > 1
-ORDER BY elapsed_time DESC;
-
--- MySQL
-SHOW FULL PROCESSLIST;
-```
-
-#### 锁监控
-```sql
--- Oracle
-SELECT * FROM v$locked_object;
-SELECT * FROM v$session WHERE blocking_session IS NOT NULL;
-
--- MySQL
-SHOW ENGINE INNODB STATUS;
-```
 
 ## 多数据库支持
 

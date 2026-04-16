@@ -44,27 +44,27 @@ Git提交 + 更新进度文件
 
 | 序号 | 检查项 | 文档 | 说明 |
 |------|--------|------|------|
-| 1 | 前后端接口一致性检查 | [API-CONFORMANCE-CHECK.md](API-CONFORMANCE-CHECK.md) | 检查前后端接口是否一致，URL是否符合规范 |
+| 1 | 前后端接口一致性检查 | [TEST-API-CONFORMANCE-CHECK.md](../../cds-product-test-zh/references/TEST-API-CONFORMANCE-CHECK.md) | 检查前后端接口是否一致，URL是否符合规范 |
 
 ### 前端检查（可选）
 
 | 序号 | 检查项 | 文档 | 说明 |
 |------|--------|------|------|
-| 2 | 前端文件夹层级结构检查 | [FRONTEND-STRUCTURE-CHECK.md](FRONTEND-STRUCTURE-CHECK.md) | 检查前端项目结构是否符合前端设计 |
-| 3 | 前端代码实现检查 | [FRONTEND-IMPLEMENTATION-CHECK.md](FRONTEND-IMPLEMENTATION-CHECK.md) | 检查前端代码是否符合前端设计文档 |
+| 2 | 前端文件夹层级结构检查 | [TEST-FRONTEND-STRUCTURE-CHECK.md](../../cds-product-test-zh/references/TEST-FRONTEND-STRUCTURE-CHECK.md) | 检查前端项目结构是否符合前端设计 |
+| 3 | 前端代码实现检查 | [TEST-FRONTEND-IMPLEMENTATION-CHECK.md](../../cds-product-test-zh/references/TEST-FRONTEND-IMPLEMENTATION-CHECK.md) | 检查前端代码是否符合前端设计文档 |
 
 ### 后端检查（可选）
 
 | 序号 | 检查项 | 文档 | 说明 |
 |------|--------|------|------|
-| 4 | 后端文件夹层级结构检查 | [BACKEND-STRUCTURE-CHECK.md](BACKEND-STRUCTURE-CHECK.md) | 检查后端包结构和类文件位置是否符合后端设计 |
-| 5 | 后端代码实现检查 | [BACKEND-IMPLEMENTATION-CHECK.md](BACKEND-IMPLEMENTATION-CHECK.md) | 检查后端代码实现、类命名、初始化语句是否符合设计要求 |
+| 4 | 后端文件夹层级结构检查 | [TEST-BACKEND-STRUCTURE-CHECK.md](../../cds-product-test-zh/references/TEST-BACKEND-STRUCTURE-CHECK.md) | 检查后端包结构和类文件位置是否符合后端设计 |
+| 5 | 后端代码实现检查 | [TEST-BACKEND-IMPLEMENTATION-CHECK.md](../../cds-product-test-zh/references/TEST-BACKEND-IMPLEMENTATION-CHECK.md) | 检查后端代码实现、类命名、初始化语句是否符合设计要求 |
 
 ## 检查执行流程
 
 ### 步骤1：前后端接口一致性检查
 
-**执行文档**：[API-CONFORMANCE-CHECK.md](API-CONFORMANCE-CHECK.md)
+**执行文档**：[TEST-API-CONFORMANCE-CHECK.md](../../cds-product-test-zh/references/TEST-API-CONFORMANCE-CHECK.md)
 
 **检查内容**：
 1. 收集前端接口调用
@@ -86,7 +86,7 @@ Git提交 + 更新进度文件
 
 ### 步骤2：前端文件夹层级结构检查
 
-**执行文档**：[FRONTEND-STRUCTURE-CHECK.md](FRONTEND-STRUCTURE-CHECK.md)
+**执行文档**：[TEST-FRONTEND-STRUCTURE-CHECK.md](../../cds-product-test-zh/references/TEST-FRONTEND-STRUCTURE-CHECK.md)
 
 **检查内容**：
 1. 读取前端架构设计文档
@@ -111,7 +111,7 @@ Git提交 + 更新进度文件
 
 ### 步骤3：前端代码实现检查
 
-**执行文档**：[FRONTEND-IMPLEMENTATION-CHECK.md](FRONTEND-IMPLEMENTATION-CHECK.md)
+**执行文档**：[TEST-FRONTEND-IMPLEMENTATION-CHECK.md](../../cds-product-test-zh/references/TEST-FRONTEND-IMPLEMENTATION-CHECK.md)
 
 **检查内容**：
 1. 读取前端设计文档
@@ -128,7 +128,7 @@ Git提交 + 更新进度文件
 
 ### 步骤4：后端文件夹层级结构检查
 
-**执行文档**：[BACKEND-STRUCTURE-CHECK.md](BACKEND-STRUCTURE-CHECK.md)
+**执行文档**：[TEST-BACKEND-STRUCTURE-CHECK.md](../../cds-product-test-zh/references/TEST-BACKEND-STRUCTURE-CHECK.md)
 
 **检查内容**：
 1. 读取后端架构设计文档
@@ -153,7 +153,7 @@ Git提交 + 更新进度文件
 
 ### 步骤5：后端代码实现检查
 
-**执行文档**：[BACKEND-IMPLEMENTATION-CHECK.md](BACKEND-IMPLEMENTATION-CHECK.md)
+**执行文档**：[TEST-BACKEND-IMPLEMENTATION-CHECK.md](../../cds-product-test-zh/references/TEST-BACKEND-IMPLEMENTATION-CHECK.md)
 
 **检查内容**：
 1. 读取后端设计文档
@@ -286,10 +286,10 @@ Git提交 + 更新进度文件
 
 ## 相关文档
 
-- [前后端接口一致性检查指南](API-CONFORMANCE-CHECK.md)
-- [前端文件夹层级结构检查指南](FRONTEND-STRUCTURE-CHECK.md)
-- [前端代码实现检查指南](FRONTEND-IMPLEMENTATION-CHECK.md)
-- [后端文件夹层级结构检查指南](BACKEND-STRUCTURE-CHECK.md)
-- [后端代码实现检查指南](BACKEND-IMPLEMENTATION-CHECK.md)
+- [前后端接口一致性检查指南](../../cds-product-test-zh/references/TEST-API-CONFORMANCE-CHECK.md)
+- [前端文件夹层级结构检查指南](../../cds-product-test-zh/references/TEST-FRONTEND-STRUCTURE-CHECK.md)
+- [前端代码实现检查指南](../../cds-product-test-zh/references/TEST-FRONTEND-IMPLEMENTATION-CHECK.md)
+- [后端文件夹层级结构检查指南](../../cds-product-test-zh/references/TEST-BACKEND-STRUCTURE-CHECK.md)
+- [后端代码实现检查指南](../../cds-product-test-zh/references/TEST-BACKEND-IMPLEMENTATION-CHECK.md)
 - [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
 - [上下文清理规范](CONTEXT-CLEANING.md)

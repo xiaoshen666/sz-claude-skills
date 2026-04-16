@@ -108,6 +108,18 @@ END IF
 
 ## 详细指南索引
 
+### 检查文档（从cds-product-develop-zh移入）
+
+| 文件 | 用途 |
+|------|------|
+| TEST-API-CONFORMANCE-CHECK.md | 前后端接口一致性检查指南 |
+| TEST-FRONTEND-STRUCTURE-CHECK.md | 前端文件夹层级结构检查指南 |
+| TEST-FRONTEND-IMPLEMENTATION-CHECK.md | 前端代码实现检查指南 |
+| TEST-BACKEND-STRUCTURE-CHECK.md | 后端文件夹层级结构检查指南 |
+| TEST-BACKEND-IMPLEMENTATION-CHECK.md | 后端代码实现检查指南 |
+
+### 测试文档
+
 | 文件 | 用途 |
 |------|------|
 | TEST-SETUP.md | 测试环境设置指南 |

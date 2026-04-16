@@ -4,7 +4,39 @@
 
 本指南用于生成跨服务调用的 Feign API 接口代码。仅在用户明确要求生成 Feign 接口时才使用本指南。
 
-> **重要说明**：Feign 接口为**可选功能**，默认不生成。只有在用户明确要求"需要跨服务调用"或"需要暴露Feign接口"时才生成。
+> **重要说明**：Feign 接口为**可选功能**，默认不生成。只有在用户明确要求“需要跨服务调用”或“需要暴露Feign接口”时才生成。
+
+## 文件目录说明
+
+### Feign API接口存放位置
+
+**模块**: `{moduleCode}-custom-api`
+
+**路径**: `{moduleCode}/{moduleCode}-custom-api/src/main/java/com/supcon/nebule/{moduleCode}/custom/api/`
+
+**完整示例**:
+```
+{moduleCode}-custom-api/
+└── src/main/java/com/supcon/nebule/{moduleCode}/custom/
+    └── api/
+        └── Custom{ModuleCode}{ModelCode}Api.java
+```
+
+### DTO存放位置
+
+**模块**: `{moduleCode}-custom-api`
+
+**路径**: `{moduleCode}/{moduleCode}-custom-api/src/main/java/com/supcon/nebule/{moduleCode}/custom/dto/`
+
+**完整示例**:
+```
+{moduleCode}-custom-api/
+└── src/main/java/com/supcon/nebule/{moduleCode}/custom/
+    └── dto/
+        └── Custom{ModuleCode}{ModelCode}DTO.java
+```
+
+**详细说明**: 参考 [后端模块代码目录查找规则](BACKEND-MODULE-STRUCT-RULES.md)
 
 ## 使用前提
 

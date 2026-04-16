@@ -581,5 +581,5 @@ Controller → Service → DAO → Mapper XML
 - [后端架构设计文档](design-docs/backend-architecture/{功能名称}后端架构设计.md)
 - [API设计文档](design-docs/backend-architecture/{功能名称}-API设计文档.md)
 - [后端代码实现指南](BACKEND-IMPL.md)
-- [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)
+- [后端代码生成流程控制](BACKEND-CODE-GEN.md)
 - [上下文清理规范](CONTEXT-CLEANING.md)

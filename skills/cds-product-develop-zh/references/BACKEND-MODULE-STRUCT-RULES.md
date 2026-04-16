@@ -146,11 +146,19 @@
 │   └── query/                  # 自定义Query
 ├── src/main/resources/
 │   └── META-INF/
+│       ├── oracle/             # Oracle数据库初始化SQL
+│       ├── sqlserver/          # SQL Server数据库初始化SQL
+│       ├── mariadb/            # MariaDB数据库初始化SQL
+│       ├── dm/                 # DM数据库初始化SQL
 │       └── persistence.xml     # JPA持久化配置（如需要）
 └── pom.xml
 ```
 
-**用途**: 存放数据访问层相关的代码，包括实体类、DAO接口、查询对象等。
+**关键文件**：
+- **初始化SQL**: `src/main/resources/META-INF/{databaseType}/{moduleCode}CustomInit.sql`
+- 按数据库类型分目录存放建表SQL和初始化数据SQL
+
+**用途**: 存放数据访问层相关的代码，包括实体类、DAO接口、查询对象以及数据库初始化SQL脚本。
 
 ### {moduleCode}-custom-service
 

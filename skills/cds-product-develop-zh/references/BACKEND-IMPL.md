@@ -1,5 +1,37 @@
 # 后端工程师角色实现
 
+## 启动恢复流程（最高优先级）
+
+每次进入时**必须首先执行**以下流程：
+
+### 步骤0：读取跟踪文件
+```
+IF 项目根目录存在 backend-code-gen.md THEN
+    读取 backend-code-gen.md
+    判断当前阶段状态
+    执行对应的恢复操作
+ELSE
+    创建新的 backend-code-gen.md
+    进入数据库类型选择步骤
+END IF
+```
+
+### 恢复操作决策表
+| backend-code-gen.md状态 | 当前阶段 | 恢复操作 |
+|------------------------|---------|---------|
+| 文件不存在 | - | 创建文件，选择数据库类型，从阶段1开始 |
+| 阶段1状态为“未开始” | 阶段1 | 从阶段1：VO、BO和Entity生成开始 |
+| 阶段1状态为“进行中” | 阶段1 | 继续阶段1的生成工作 |
+| 阶段1状态为“已完成”，阶段2“未开始” | 阶段2 | 从阶段2：Controller生成开始 |
+| 阶段2状态为“进行中” | 阶段2 | 继续阶段2的生成工作 |
+| 阶段2状态为“已完成”，阶段3“未开始” | 阶段3 | 从阶段3：Service和ServiceImpl生成开始 |
+| 阶段3状态为“进行中” | 阶段3 | 继续阶段3的生成工作 |
+| 阶段3状态为“已完成”，阶段4“未开始” | 阶段4 | 从阶段4：Dao和Mapper生成开始 |
+| 阶段4状态为“进行中” | 阶段4 | 继续阶段4的生成工作 |
+| 阶段4状态为“已完成”，阶段5“未开始” | 阶段5 | 从阶段5：初始化SQL生成开始 |
+| 阶段5状态为“进行中” | 阶段5 | 继续阶段5的生成工作 |
+| 所有阶段已完成 | - | 提示用户后端代码生成已完成 |
+
 ## 角色定位
 
 你是一位专业的 CDS 后端开发工程师，负责根据后端技术方案实现具体的 Java Spring Boot 后端代码。你精通 CDS 框架、Spring Boot、MyBatis-Plus 等技术栈，能够高效地开发企业级后端应用。
@@ -18,8 +50,13 @@
 - **项目结构**：熟练掌握 整体项目结构和 {moduleCode}-custom 目录结构（详见 [项目结构工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md)）
 - **启动引导模块**：Spring Boot 启动类设计、健康检查接口、bootstrap.properties 配置规范（详见 [启动引导模块工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md)）
 - **命名与接口规范**：后端命名、接口 URL、请求头与 API 请求示例请统一参考 [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
-- **业务代码生成**：统一基于 Entity / BO / VO / DAO / Mapper / Service / Controller 模板生成业务代码（详见 [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)）
-- **Feign API 接口**：跨服务调用的 Feign 接口为**可选功能**，默认不生成。仅在用户明确要求时，参考 [Feign API 接口生成指南](FEIGN-API-GENERATION.md) 生成
+- **业务代码生成**：统一基于分阶段生成流程（详见 [后端代码生成流程控制](BACKEND-CODE-GEN.md)）
+  - 阶段1：VO、BO和Entity生成（详见 [ENTITY-BO-VO-GENERATION.md](ENTITY-BO-VO-GENERATION.md)）
+  - 阶段2：Controller生成（详见 [CONTROLLER-GENERATION.md](CONTROLLER-GENERATION.md)）
+  - 阶段3：Service和ServiceImpl生成（详见 [SERVICE-GENERATION.md](SERVICE-GENERATION.md)）
+  - 阶段4：Dao和Mapper生成（详见 [DAO-MAPPER-GENERATION.md](DAO-MAPPER-GENERATION.md)）
+  - 阶段5：初始化SQL生成（详见 [INIT-SQL-GENERATION.md](INIT-SQL-GENERATION.md)）
+- **Feign API 接口**：跨服务调用的 Feign 接口为**可选功能**，默认不生成。仅在用户明确要求时，参考 [Feign API 接口生成指南](BACKEND-FEIGN-API-GENERATION.md) 生成
 - **模块注册**：ModuleRegisterInitialize、菜单注册、工作流注册等实现请引用 [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
 - **配置管理**：公共服务配置和自动扫描配置（详见 [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md)）
 - **数据库设计**：表结构设计和SQL脚本规范（详见 [数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md)）
@@ -107,42 +144,43 @@
 
 ### 业务代码模板使用规范
 
-后端业务逻辑实现中的 Entity、BO、VO、DAO、Mapper、Service、Controller 代码示例已统一抽取到 [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)。
+后端业务代码生成已拆分为分阶段流程（详见 [后端代码生成流程控制](BACKEND-CODE-GEN.md)）：
 
-在生成业务代码时，必须遵循以下约束：
+- **阶段1-4（必选）**：VO/BO/Entity → Controller → Service/ServiceImpl → Dao/Mapper
+- **阶段5-9（可选）**：根据用户选择生成对应功能
 
-1. 先根据需求详细设计、后端架构设计和 API 设计文档确认模型职责
-2. 再使用 [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md) 中的模板替换占位符生成代码
-3. 所有包名、类名、注解参数、接口路径前缀，都必须使用用户最终确认后的 `moduleCode` 与 `acronym`
-4. 若当前功能除业务代码外还涉及模块初始化、菜单、工作流注册，则模块注册部分必须引用 `cds-product-design-zh` 中的 [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
+各阶段的详细模板和规范请参考对应的生成指南文档：
+- 阶段1：[BACKEND-ENTITY-BO-VO-GENERATION.md](BACKEND-ENTITY-BO-VO-GENERATION.md)
+- 阶段2：[BACKEND-CONTROLLER-GENERATION.md](BACKEND-CONTROLLER-GENERATION.md)
+- 阶段3：[BACKEND-SERVICE-GENERATION.md](BACKEND-SERVICE-GENERATION.md)
+- 阶段4：[BACKEND-DAO-MAPPER-GENERATION.md](BACKEND-DAO-MAPPER-GENERATION.md)
+- 阶段5：[BACKEND-INIT-SQL-GENERATION.md](BACKEND-INIT-SQL-GENERATION.md)
+- 阶段6：[BACKEND-FEIGN-API-GENERATION.md](BACKEND-FEIGN-API-GENERATION.md)
+- 阶段7：[../../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md](../../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md)
+- 阶段8：[../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
+- 阶段9：[../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md)
 
-### 配置类开发规范
+### 关键规则
 
-> **详细业务代码模板请参考**: [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)
-> **详细配置说明请参考**: [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md)
-> **详细注册机制请参考**: [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
+1. 所有包名、类名、注解参数、接口路径前缀，都必须使用用户最终确认后的 `moduleCode` 与 `acronym`
+2. 对象转换必须使用手动setter方式，禁止使用PojoUtil.copy()
+3. 每个阶段完成后必须更新backend-code-gen.md跟踪文件
 
-## 数据库开发规范
+## 其他规范引用
 
-> **详细数据库设计规范请参考**: [数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md)
+### 数据库开发规范
+> 请参考：[数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md)
 
-## API 开发规范
+### API 开发规范
+> 请参考：[后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
 
-> **详细接口 URL、请求头、请求参数示例请参考**: [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
->
-> 接口路径前缀必须遵循以下规则：
-> - 不需要权限控制的接口：`/public/{moduleCode}/` 开头
-> - 需要权限控制的接口：`/{moduleCode}/` 开头
->
-> 基础增删改查接口、请求头和请求参数示例统一按上述工具文档执行。
-
-### 响应结果示例
+### 响应结果格式
 ```json
 // 成功响应
 {
     "code": 100000000,
     "message": "操作成功",
-    "data": "V1.02.02.12-26011915-M\n"
+    "data": {...}
 }
 
 // 失败响应
@@ -153,196 +191,53 @@
 }
 ```
 
-## 代码质量保证
-
-### Java 编码规范
-- 使用4空格缩进（不要使用Tab）
-- 每行代码不超过120个字符
-- 类必须有JavaDoc注释
-- 公共方法必须有JavaDoc注释
-- 注释使用中文
-
-### 命名规范
-
-> **详细命名、接口 URL 与请求响应规范请参考**: [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
->
-> develop 阶段必须在此基础上遵循以下约束：
-> - **包命名**：`com.supcon.nebule.{moduleCode}.custom`
-> - **Entity**：`Custom{ModuleCode}{ModelCode}Entity`
-> - **DAO**：`Custom{ModuleCode}{ModelCode}Dao`
-> - **Service**：`Custom{ModuleCode}{ModelCode}Service`
-> - **Controller**：`Custom{ModuleCode}{ModelCode}Controller`
-> - **VO**：`Custom{ModuleCode}{ModelCode}VO`
-> - **BO**：`Custom{ModuleCode}{ModelCode}BO`
-> - **受控接口路径前缀**：`/{moduleCode}/`
-> - **公开接口路径前缀**：`/public/{moduleCode}/`
-> - **前端实际调用地址**：在后端接口 URL 前统一增加 `/msService`
-
-### 事务管理
-- 使用 `@Transactional(rollbackFor = Exception.class)`
-- 业务方法添加事务控制
-- 异常时自动回滚
+### 代码质量保证
+> 详细规范请参考各阶段生成指南文档，已包含编码规范、命名规范、事务管理等内容。
 
 ## 开发流程
 
-### 1. 环境准备
-```bash
-# 编译项目
-mvn clean compile
+详细流程请参考：[后端代码生成流程控制](BACKEND-CODE-GEN.md)
 
-# 打包项目
-mvn clean package
-
-# 运行测试
-mvn test
-
-# 代码检查
-mvn checkstyle:check
-```
-
-### 2. 开发步骤
-1. **检查前序产物**：优先查找 `{功能名称}-需求详细设计.md`、`{功能名称}-后端架构设计.md`、`{功能名称}-API设计文档.md`
-2. **确认是否可继续实现**：若文档不完整，至少确认是否存在 `{功能名称}-需求详细设计.md`；若有缺失，必须先询问用户是否允许基于现有资料合理发挥
-3. **阅读技术方案**：理解需求、后端架构设计和 API 设计规范，并优先从后端技术实现方案文档中读取 `moduleCode` 与 `acronym`
-4. **确认关键标识**：将读取或提取到的 `moduleCode`、`acronym` 展示给用户确认；若文档缺失则转为从当前项目 metadata 提取，若仍缺失或用户反馈错误，则要求用户提供正确值
-5. **创建数据库表**：基于用户最终确认的关键标识执行SQL初始化脚本
-6. **生成基础代码**：基于确认后的 `moduleCode`、`acronym` 创建Entity、DAO、Service、Controller
-7. **实现业务逻辑**：编写核心业务代码
-8. **添加配置类**：配置扫描和模块注册
-9. **启动模块配置**：正确配置启动类包扫描、Mapper 扫描和 Feign 客户端
-10. **测试验证**：确保功能正确性
-
-### 3. 代码提交
-- 遵循 Git 提交规范
-- 提交信息清晰明确
-- 完成必要验证后合并
+简要流程：
+1. **检查前序产物** → 2. **确认可选功能** → 3. **执行阶段1-4** → 4. **执行阶段5-9（如选择）** → 5. **更新跟踪文件**
 
 ## 最佳实践
 
-### 实体设计原则
-1. **原生实现**：不继承任何基类，使用MyBatis-Plus注解独立实现
-2. **注解完整**：添加必要的 MyBatis-Plus 注解（@TableName、@TableId、@TableField等）
-3. **审计字段**：包含创建时间、更新时间、创建人、更新人等审计字段
-4. **字段规范**：遵循数据库字段命名规范
-5. **类型安全**：使用合适的 Java 类型
-
-### 服务设计原则
-1. **单一职责**：每个 Service 只负责一个业务领域
-2. **事务控制**：合理配置事务传播和隔离级别
-3. **异常处理**：统一异常处理和错误码
-4. **性能优化**：合理使用缓存和批量操作
-
-### 控制器设计原则
-1. **RESTful 风格**：遵循 RESTful API 设计规范，并优先对齐 [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md) 中的接口命名与路径规则
-2. **路径前缀规范**：需要权限控制的接口使用 `/{moduleCode}/`，不需要权限控制的接口使用 `/public/{moduleCode}/`
-3. **参数校验**：使用注解进行参数验证
-4. **统一响应**：响应结构使用项目既定的 `code` / `message` / `data` 字段
-5. **日志记录**：添加必要的操作日志
-
-### 错误处理
-1. **业务异常**：定义业务相关的异常类型
-2. **系统异常**：处理系统级别的异常
-3. **参数校验**：统一参数校验和错误提示
-4. **日志记录**：详细的错误日志记录
+> 详细最佳实践已分散到各阶段生成指南文档中，包括：
+> - 实体设计原则：[BACKEND-ENTITY-BO-VO-GENERATION.md](BACKEND-ENTITY-BO-VO-GENERATION.md)
+> - 服务设计原则：[BACKEND-SERVICE-GENERATION.md](BACKEND-SERVICE-GENERATION.md)
+> - 控制器设计原则：[BACKEND-CONTROLLER-GENERATION.md](BACKEND-CONTROLLER-GENERATION.md)
 
 ## 工具文档引用
 
-### 后端开发工具指南
+### 后端代码生成阶段文档
 
-| 工具文档 | 用途 | 使用场景 |
-|---------|------|----------|
-| [项目结构工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md) | CDS项目目录结构和模块划分 | 新建项目、理解项目结构时 |
-| [启动引导模块工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md) | Spring Boot 启动类、健康检查、bootstrap.properties 配置 | 应用启动配置、健康检查接口开发时 |
-| [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md) | Entity / BO / VO / DAO / Mapper / Service / Controller 业务代码模板 | 后端业务逻辑代码生成时 |
-| [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md) | 后端命名、接口 URL、请求头与 API 请求参数规范 | Controller 设计、接口路径规划、API 示例编写时 |
-| [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 | 配置类开发、包扫描配置时 |
-| [数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md) | 数据库设计和SQL脚本规范 | 数据库设计、表结构创建时 |
-| [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 模块注册、菜单注册、工作流注册 | 模块初始化、系统集成时 |
+| 阶段 | 文档 | 用途 |
+|------|------|------|
+| 流程控制 | [BACKEND-CODE-GEN.md](BACKEND-CODE-GEN.md) | 后端代码生成流程控制和断点续传 |
+| 阶段1 | [BACKEND-ENTITY-BO-VO-GENERATION.md](BACKEND-ENTITY-BO-VO-GENERATION.md) | Entity、BO、VO生成 |
+| 阶段2 | [BACKEND-CONTROLLER-GENERATION.md](BACKEND-CONTROLLER-GENERATION.md) | Controller生成 |
+| 阶段3 | [BACKEND-SERVICE-GENERATION.md](BACKEND-SERVICE-GENERATION.md) | Service和ServiceImpl生成 |
+| 阶段4 | [BACKEND-DAO-MAPPER-GENERATION.md](BACKEND-DAO-MAPPER-GENERATION.md) | Dao和Mapper生成 |
+| 阶段5 | [BACKEND-INIT-SQL-GENERATION.md](BACKEND-INIT-SQL-GENERATION.md) | 初始化SQL生成 |
+| 阶段6 | [BACKEND-FEIGN-API-GENERATION.md](BACKEND-FEIGN-API-GENERATION.md) | Feign API接口生成 |
+| 阶段7 | [BACKEND-TOOLS-BOOTSTRAP.md](../../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md) | 启动类代码生成 |
+| 阶段8 | [BACKEND-TOOLS-MODULE-REGISTER.md](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 菜单注册配置生成 |
+| 阶段9 | [BACKEND-TOOLS-CONFIGURATION.md](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md) | 依赖注入配置生成 |
+
+### 其他参考文档
+
+| 文档 | 用途 |
+|------|------|
+| [项目结构工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md) | CDS项目目录结构和模块划分 |
+| [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md) | 命名、接口URL、请求响应规范 |
+| [数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md) | 数据库设计规范 |
+| [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 |
+| [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 模块、菜单、工作流注册 |
 
 ### 使用建议
 
-1. **新手入门**: 先阅读项目结构工具指南，理解整体架构
-2. **启动配置**: 参考启动引导模块工具指南，正确配置启动类、健康检查和 bootstrap.properties
-3. **业务实现**: 先参考后端业务代码生成工具指南，生成 Entity / DAO / Service / Controller 等基础代码
-4. **Feign API 接口（可选）**: 如用户要求跨服务调用，参考 Feign API 接口生成指南生成 Feign 接口和 DTO
-5. **接口设计**: 参考后端命名和编码规范工具指南，确定接口路径前缀、请求头、响应结构和 API 请求示例
-6. **配置开发**: 参考配置管理工具指南，正确配置扫描和注册
-7. **数据库设计**: 使用数据库规范工具指南，确保表结构规范
-8. **模块集成**: 查看模块注册工具指南，完成系统注册配置
-
-### 工具文档特点
-
-- **模块化**: 每个工具文档专注于特定领域
-- **实用性强**: 提供可直接使用的代码模板和配置示例
-- **详细规范**: 提供完整的开发规范和最佳实践
-
-## Feign API 接口生成（可选）
-
-> **重要说明**：Feign API 接口为**可选功能**，默认不生成。仅在用户明确要求“需要跨服务调用”或“需要暴露Feign接口”时才生成。
-
-### 生成时机
-
-在基础业务代码（Entity、BO、VO、DAO、Service、Controller）生成完成后，如果用户需要跨服务调用，可以生成 Feign API 接口。
-
-### 生成前确认
-
-在生成 Feign API 接口前，必须向用户确认：
-
-```markdown
-### Feign 接口生成确认
-
-基础业务代码已生成完成。您是否需要生成 Feign API 接口（用于其他微服务调用当前模块）？
-
-如需生成，请确认以下内容：
-
-1. **需要暴露的接口列表**：
-   - [ ] save（保存）
-   - [ ] update（更新）
-   - [ ] getById（根据ID查询）
-   - [ ] list（列表查询）
-   - [ ] delete（删除）
-   - [ ] 其他自定义接口：_______
-
-2. **接口访问范围**：
-   - [ ] 仅内部服务调用
-   - [ ] 需要外部系统调用（需额外配置）
-
-3. **DTO 字段确认**：
-   - 用于服务间传输的字段列表（可能与前端 VO 不同）
-
-请确认以上信息，或说明您的具体需求。
-```
-
-### 生成步骤
-
-用户确认后，按照以下步骤生成：
-
-1. **读取详细指南**：参考 [Feign API 接口生成指南](FEIGN-API-GENERATION.md)
-2. **生成 Feign API 接口**：在 `{moduleCode}-custom-api` 模块中生成接口定义
-3. **生成 DTO**：生成用于服务间传输的 DTO 类
-4. **修改 Controller**：让 Controller 实现 Feign API 接口
-5. **配置 Feign 扫描**：在公共服务配置类中添加 `@EnableFeignClients` 配置
-6. **更新进度文件**：记录已生成 Feign 接口
-7. **Git 提交**：提交 Feign API 相关代码
-
-### 生成后说明
-
-Feign API 接口生成完成后，在 `{moduleCode}-custom-api/` 目录下创建 `README.md`，包含：
-- Feign API 接口列表
-- 调用示例
-- DTO 字段说明
-- 注意事项
-
-## 后续步骤
-
-后端代码生成完成后，将进行：
-1. **基础验证**：进行必要的代码质量与编译检查
-2. **Git 提交**：将代码提交到版本控制系统
-3. **生成后端功能运行说明文档**：在 `{moduleCode}-custom/` 目录下创建 `README.md` 或 `功能运行说明.md`，包含：
-   - 功能模块说明
-   - 启动方式和依赖说明
-   - 数据库初始化说明
-   - API 接口说明
-   - 配置项说明
-   - 常见问题和解决方案
-4. **集成测试**：开始模块集成测试
+1. **阶段1-4**：必选，按顺序执行
+2. **阶段5-9**：可选，根据用户需求选择执行
+3. 每个阶段完成后必须更新backend-code-gen.md
+4. 所有详细模板和规范请参考对应的阶段文档

@@ -34,9 +34,9 @@
 | 工具文档 | 用途 | 使用场景 |
 |---------|------|----------|
 | [项目结构工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md) | CDS项目目录结构和模块划分 | 新建项目、理解项目结构时 |
-| [后端业务代码生成工具指南](references/BACKEND-TOOLS-CODE-GENERATION.md) | Entity / BO / VO / DAO / Mapper / Service / Controller 业务代码模板 | 后端业务逻辑代码生成时 |
+| [后端代码生成流程控制](references/BACKEND-CODE-GEN.md) | 后端代码生成9阶段流程控制和断点续传 | 后端业务逻辑代码生成时 |
 | [配置管理工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 | 配置类开发、包扫描配置时 |
 | [数据库规范工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md) | 数据库设计和SQL脚本规范 | 数据库设计、表结构创建时 |
 | [模块注册工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 模块注册、菜单注册、工作流注册 | 模块初始化、系统集成时 |
 
-> **说明**: 后端业务代码模板已从实现指南中抽离到 `cds-product-develop-zh/references/BACKEND-TOOLS-CODE-GENERATION.md`，供开发阶段直接引用。模块注册、菜单注册、工作流注册等设计仍然保留在 `cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md` 中，供需要注册代码时引用。
+> **说明**: 后端代码生成已采用9阶段流程控制机制，详见 `cds-product-develop-zh/references/BACKEND-CODE-GEN.md`。模块注册、菜单注册、工作流注册等设计仍然保留在 `cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md` 中，供需要注册代码时引用。
