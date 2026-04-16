@@ -19,6 +19,7 @@
 - **启动引导模块**：Spring Boot 启动类设计、健康检查接口、bootstrap.properties 配置规范（详见 [启动引导模块工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md)）
 - **命名与接口规范**：后端命名、接口 URL、请求头与 API 请求示例请统一参考 [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
 - **业务代码生成**：统一基于 Entity / BO / VO / DAO / Mapper / Service / Controller 模板生成业务代码（详见 [后端业务代码生成工具指南](BACKEND-TOOLS-CODE-GENERATION.md)）
+- **Feign API 接口**：跨服务调用的 Feign 接口为**可选功能**，默认不生成。仅在用户明确要求时，参考 [Feign API 接口生成指南](FEIGN-API-GENERATION.md) 生成
 - **模块注册**：ModuleRegisterInitialize、菜单注册、工作流注册等实现请引用 [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
 - **配置管理**：公共服务配置和自动扫描配置（详见 [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md)）
 - **数据库设计**：表结构设计和SQL脚本规范（详见 [数据库规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md)）
@@ -262,16 +263,74 @@ mvn checkstyle:check
 1. **新手入门**: 先阅读项目结构工具指南，理解整体架构
 2. **启动配置**: 参考启动引导模块工具指南，正确配置启动类、健康检查和 bootstrap.properties
 3. **业务实现**: 先参考后端业务代码生成工具指南，生成 Entity / DAO / Service / Controller 等基础代码
-4. **接口设计**: 参考后端命名和编码规范工具指南，确定接口路径前缀、请求头、响应结构和 API 请求示例
-5. **配置开发**: 参考配置管理工具指南，正确配置扫描和注册
-6. **数据库设计**: 使用数据库规范工具指南，确保表结构规范
-7. **模块集成**: 查看模块注册工具指南，完成系统注册配置
+4. **Feign API 接口（可选）**: 如用户要求跨服务调用，参考 Feign API 接口生成指南生成 Feign 接口和 DTO
+5. **接口设计**: 参考后端命名和编码规范工具指南，确定接口路径前缀、请求头、响应结构和 API 请求示例
+6. **配置开发**: 参考配置管理工具指南，正确配置扫描和注册
+7. **数据库设计**: 使用数据库规范工具指南，确保表结构规范
+8. **模块集成**: 查看模块注册工具指南，完成系统注册配置
 
 ### 工具文档特点
 
 - **模块化**: 每个工具文档专注于特定领域
 - **实用性强**: 提供可直接使用的代码模板和配置示例
 - **详细规范**: 提供完整的开发规范和最佳实践
+
+## Feign API 接口生成（可选）
+
+> **重要说明**：Feign API 接口为**可选功能**，默认不生成。仅在用户明确要求“需要跨服务调用”或“需要暴露Feign接口”时才生成。
+
+### 生成时机
+
+在基础业务代码（Entity、BO、VO、DAO、Service、Controller）生成完成后，如果用户需要跨服务调用，可以生成 Feign API 接口。
+
+### 生成前确认
+
+在生成 Feign API 接口前，必须向用户确认：
+
+```markdown
+### Feign 接口生成确认
+
+基础业务代码已生成完成。您是否需要生成 Feign API 接口（用于其他微服务调用当前模块）？
+
+如需生成，请确认以下内容：
+
+1. **需要暴露的接口列表**：
+   - [ ] save（保存）
+   - [ ] update（更新）
+   - [ ] getById（根据ID查询）
+   - [ ] list（列表查询）
+   - [ ] delete（删除）
+   - [ ] 其他自定义接口：_______
+
+2. **接口访问范围**：
+   - [ ] 仅内部服务调用
+   - [ ] 需要外部系统调用（需额外配置）
+
+3. **DTO 字段确认**：
+   - 用于服务间传输的字段列表（可能与前端 VO 不同）
+
+请确认以上信息，或说明您的具体需求。
+```
+
+### 生成步骤
+
+用户确认后，按照以下步骤生成：
+
+1. **读取详细指南**：参考 [Feign API 接口生成指南](FEIGN-API-GENERATION.md)
+2. **生成 Feign API 接口**：在 `{moduleCode}-custom-api` 模块中生成接口定义
+3. **生成 DTO**：生成用于服务间传输的 DTO 类
+4. **修改 Controller**：让 Controller 实现 Feign API 接口
+5. **配置 Feign 扫描**：在公共服务配置类中添加 `@EnableFeignClients` 配置
+6. **更新进度文件**：记录已生成 Feign 接口
+7. **Git 提交**：提交 Feign API 相关代码
+
+### 生成后说明
+
+Feign API 接口生成完成后，在 `{moduleCode}-custom-api/` 目录下创建 `README.md`，包含：
+- Feign API 接口列表
+- 调用示例
+- DTO 字段说明
+- 注意事项
 
 ## 后续步骤
 

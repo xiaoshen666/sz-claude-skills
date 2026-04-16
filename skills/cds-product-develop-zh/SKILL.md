@@ -120,7 +120,7 @@ END IF
 |------|------|
 | FRONTEND-IMPL.md | 前端代码实现指南（基于CDS模板），包含前序设计产物检查与自由发挥确认流程 |
 | BACKEND-IMPL.md | 后端工程师角色实现指南，包含技术栈、开发规范、最佳实践，以及 `moduleCode` / `acronym` 的文档读取、metadata 提取、前序设计产物检查与用户确认流程 |
-| STARTUP-CODE.md | 启动类代码生成指南 |
+| ../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md | 启动类代码生成指南 |
 | INTEGRATION.md | 集成测试指南 |
 
 ## 开发者能力文档
