@@ -28,18 +28,18 @@
 
 ### 步骤0：读取跟踪文件
 ```
-IF 项目根目录存在 backend-code-gen.md THEN
-    读取 backend-code-gen.md
+IF 项目根目录存在 backend-code-gen-tracker.md THEN
+    读取 backend-code-gen-tracker.md
     判断当前阶段状态
     执行对应的恢复操作
 ELSE
-    创建新的 backend-code-gen.md
+    创建新的 backend-code-gen-tracker.md
     进入数据库类型选择步骤
 END IF
 ```
 
 ### 恢复操作决策表
-| backend-code-gen.md状态 | 当前阶段 | 恢复操作 |
+| backend-code-gen-tracker.md状态 | 当前阶段 | 恢复操作 |
 |------------------------|---------|---------|  
 | 文件不存在 | - | 创建文件，确认可选功能，从阶段1开始 |
 | 阶段1状态为“未开始” | 阶段1 | 从阶段1：VO、BO和Entity生成开始 |
@@ -91,8 +91,8 @@ END IF
 
 **选择规则**：
 1. 用户可以选择任意一个或多个功能
-2. 如果选择“数据库类型适配”，必须进一步选择具体的数据库类型
-3. 选择结果记录到 `backend-code-gen.md` 中
+2. 如果选择"数据库类型适配"，必须进一步选择具体的数据库类型
+3. 选择结果记录到 `backend-code-gen-tracker.md` 中
 4. 只生成用户选择的功能，未选择的跳过
 
 ### 阶段1：VO、BO和Entity生成
@@ -104,7 +104,7 @@ END IF
 2. 生成Entity类（原生MyBatis-Plus实现）
 3. 生成BO类
 4. 生成VO类
-5. 更新backend-code-gen.md：标记阶段1为"已完成"
+5. 更新backend-code-gen-tracker.md：标记阶段1为"已完成"
 
 **核心交付物**：
 - `Custom{ModuleCode}{ModelCode}Entity.java`
@@ -119,7 +119,7 @@ END IF
 1. 确认API设计文档
 2. 生成Controller类
 3. 实现对象转换（手动setter方式）
-4. 更新backend-code-gen.md：标记阶段2为"已完成"
+4. 更新backend-code-gen-tracker.md：标记阶段2为"已完成"
 
 **核心交付物**：
 - `Custom{ModuleCode}{ModelCode}Controller.java`
@@ -133,7 +133,7 @@ END IF
 2. 生成ServiceImpl实现类（继承ServiceImpl）
 3. 实现业务方法（saveBO、info、delete等）
 4. 实现对象转换（手动setter方式）
-5. 更新backend-code-gen.md：标记阶段3为"已完成"
+5. 更新backend-code-gen-tracker.md：标记阶段3为"已完成"
 
 **核心交付物**：
 - `Custom{ModuleCode}{ModelCode}Service.java`
@@ -147,7 +147,7 @@ END IF
 1. 生成Dao接口（继承BaseMapper）
 2. 生成Mapper XML文件（如需要）
 3. 根据数据库类型调整SQL语法
-4. 更新backend-code-gen.md：标记阶段4为"已完成"
+4. 更新backend-code-gen-tracker.md：标记阶段4为"已完成"
 
 **核心交付物**：
 - `Custom{ModuleCode}{ModelCode}Dao.java`
@@ -164,7 +164,7 @@ END IF
 2. 根据Entity生成建表SQL
 3. 根据数据库类型调整SQL语法
 4. 生成初始化数据SQL（如需要）
-5. 更新backend-code-gen.md：标记阶段5为“已完成”
+5. 更新backend-code-gen-tracker.md：标记阶段5为"已完成"
 
 **核心交付物**：
 - `init_{moduleCode}_{modelCode}.sql`
@@ -179,7 +179,7 @@ END IF
 1. 生成Feign API接口
 2. 生成DTO对象
 3. 配置@EnableFeignClients包扫描
-4. 更新backend-code-gen.md：标记阶段6为“已完成”
+4. 更新backend-code-gen-tracker.md：标记阶段6为"已完成"
 
 **核心交付物**：
 - `Custom{ModuleCode}{ModelCode}Api.java`
@@ -195,7 +195,7 @@ END IF
 1. 生成Bootstrap启动类
 2. 配置健康检查接口
 3. 配置bootstrap.properties
-4. 更新backend-code-gen.md：标记阶段7为“已完成”
+4. 更新backend-code-gen-tracker.md：标记阶段7为"已完成"
 
 **核心交付物**：
 - `Bootstrap.java`
@@ -211,7 +211,7 @@ END IF
 1. 生成ModuleRegisterInitialize
 2. 生成菜单注册SQL
 3. 生成工作流注册配置（如需要）
-4. 更新backend-code-gen.md：标记阶段8为“已完成”
+4. 更新backend-code-gen-tracker.md：标记阶段8为"已完成"
 
 **核心交付物**：
 - `{ModuleCode}ModuleRegisterInitialize.java`
@@ -227,7 +227,7 @@ END IF
 1. 生成PubServiceConfiguration配置类
 2. 配置@EnableFeignClients包扫描
 3. 配置@MapperScan包扫描
-4. 更新backend-code-gen.md：标记阶段9为“已完成”
+4. 更新backend-code-gen-tracker.md：标记阶段9为"已完成"
 
 **核心交付物**：
 - `{ModuleCode}PubServiceConfiguration.java`
@@ -241,7 +241,7 @@ END IF
 4. **确认关键标识**：确认moduleCode和acronym
 
 ### 每个阶段执行后
-1. **更新跟踪文件**：立即更新backend-code-gen.md，记录：
+1. **更新跟踪文件**：立即更新backend-code-gen-tracker.md，记录：
    - 阶段状态（已完成）
    - 完成时间
    - 生成的文件列表
@@ -271,7 +271,7 @@ END IF
 
 ### 场景1：阶段2完成后中断
 ```
-1. 读取backend-code-gen.md
+1. 读取backend-code-gen-tracker.md
 2. 发现阶段1和阶段2已完成，阶段3未开始
 3. 直接从阶段3：Service和ServiceImpl生成开始
 4. 继续执行后续阶段
@@ -279,7 +279,7 @@ END IF
 
 ### 场景2：阶段4进行中中断
 ```
-1. 读取backend-code-gen.md
+1. 读取backend-code-gen-tracker.md
 2. 发现阶段4状态为"进行中"
 3. 检查已生成的Dao文件
 4. 继续完成Dao和Mapper的生成
@@ -288,7 +288,7 @@ END IF
 
 ## 注意事项
 
-1. **必须实时更新跟踪文件**：每个阶段完成后立即更新
+1. **必须实时更新跟踪文件**：每个阶段完成后立即更新 backend-code-gen-tracker.md
 2. **数据库类型不可更改**：一旦选择，整个生成过程使用同一数据库类型
 3. **阶段顺序固定**：必须按1→2→3→4→5的顺序执行
 4. **对象转换规范**：所有阶段都必须使用手动setter方式，禁止使用工具类拷贝

@@ -6,18 +6,18 @@
 
 ### 步骤0：读取跟踪文件
 ```
-IF 项目根目录存在 backend-code-gen.md THEN
-    读取 backend-code-gen.md
+IF 项目根目录存在 backend-code-gen-tracker.md THEN
+    读取 backend-code-gen-tracker.md
     判断当前阶段状态
     执行对应的恢复操作
 ELSE
-    创建新的 backend-code-gen.md
+    创建新的 backend-code-gen-tracker.md
     进入数据库类型选择步骤
 END IF
 ```
 
 ### 恢复操作决策表
-| backend-code-gen.md状态 | 当前阶段 | 恢复操作 |
+| backend-code-gen-tracker.md状态 | 当前阶段 | 恢复操作 |
 |------------------------|---------|---------|
 | 文件不存在 | - | 创建文件，选择数据库类型，从阶段1开始 |
 | 阶段1状态为“未开始” | 阶段1 | 从阶段1：VO、BO和Entity生成开始 |
@@ -36,6 +36,11 @@ END IF
 
 你是一位专业的 CDS 后端开发工程师，负责根据后端技术方案实现具体的 Java Spring Boot 后端代码。你精通 CDS 框架、Spring Boot、MyBatis-Plus 等技术栈，能够高效地开发企业级后端应用。
 
+> **本文档是 SKILL.md 步骤4（后端代码生成）的入口文档**
+> 
+> 本文档定义角色定位、技术栈、开发规范等基础信息。
+> 具体的后端代码生成流程由 [后端代码生成流程控制](BACKEND-CODE-GEN.md) 定义，包含9个阶段的断点续传机制。
+
 ## 核心技术能力
 
 ### 技术栈掌握
@@ -50,12 +55,9 @@ END IF
 - **项目结构**：熟练掌握 整体项目结构和 {moduleCode}-custom 目录结构（详见 [项目结构工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-PROJECT-STRUCTURE.md)）
 - **启动引导模块**：Spring Boot 启动类设计、健康检查接口、bootstrap.properties 配置规范（详见 [启动引导模块工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md)）
 - **命名与接口规范**：后端命名、接口 URL、请求头与 API 请求示例请统一参考 [后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
-- **业务代码生成**：统一基于分阶段生成流程（详见 [后端代码生成流程控制](BACKEND-CODE-GEN.md)）
-  - 阶段1：VO、BO和Entity生成（详见 [ENTITY-BO-VO-GENERATION.md](ENTITY-BO-VO-GENERATION.md)）
-  - 阶段2：Controller生成（详见 [CONTROLLER-GENERATION.md](CONTROLLER-GENERATION.md)）
-  - 阶段3：Service和ServiceImpl生成（详见 [SERVICE-GENERATION.md](SERVICE-GENERATION.md)）
-  - 阶段4：Dao和Mapper生成（详见 [DAO-MAPPER-GENERATION.md](DAO-MAPPER-GENERATION.md)）
-  - 阶段5：初始化SQL生成（详见 [INIT-SQL-GENERATION.md](INIT-SQL-GENERATION.md)）
+- **业务代码生成流程**：统一基于 [后端代码生成流程控制](BACKEND-CODE-GEN.md) 的9阶段流程执行
+  - 该文档定义了完整的执行流程、断点续传机制、跟踪文件更新规则
+  - 每个阶段的详细模板和规范请参考对应的生成指南文档（见下方列表）
 - **Feign API 接口**：跨服务调用的 Feign 接口为**可选功能**，默认不生成。仅在用户明确要求时，参考 [Feign API 接口生成指南](BACKEND-FEIGN-API-GENERATION.md) 生成
 - **模块注册**：ModuleRegisterInitialize、菜单注册、工作流注册等实现请引用 [模块注册工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md)
 - **配置管理**：公共服务配置和自动扫描配置（详见 [配置管理工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md)）
@@ -140,6 +142,36 @@ END IF
 
 我需要使用这两个值继续生成后端代码、命名类文件以及数据库建表相关内容。为避免生成错误，请确认后我再继续。
 
+## 文档调用关系
+
+### 本文档在整体流程中的位置
+
+```
+SKILL.md (步骤4：后端代码生成)
+    ↓ 触发本文档
+BACKEND-IMPL.md (本文档 - 角色定义和规范)
+    ↓ 内部调用
+BACKEND-CODE-GEN.md (9阶段流程控制)
+    ↓ 每个阶段调用对应的生成指南
+    └─ 各阶段生成指南（见下方列表）
+```
+
+### 本文档职责
+
+- ✅ 定义后端工程师角色定位和技术栈
+- ✅ 定义前序设计产物检查规则
+- ✅ 定义关键标识（moduleCode/acronym）确认规则
+- ✅ 定义开发规范和关键规则
+- ✅ 引用 BACKEND-CODE-GEN.md 作为流程控制文档
+
+### BACKEND-CODE-GEN.md 职责
+
+- ✅ 定义9阶段执行流程和断点续传机制
+- ✅ 定义跟踪文件（backend-code-gen-tracker.md）的创建和更新规则
+- ✅ 定义每个阶段的前置条件和后续操作
+- ✅ 定义上下文清理和 Git 提交规范
+- ✅ 按阶段调用对应的生成指南文档
+
 ## 开发规范
 
 ### 业务代码模板使用规范
@@ -164,7 +196,7 @@ END IF
 
 1. 所有包名、类名、注解参数、接口路径前缀，都必须使用用户最终确认后的 `moduleCode` 与 `acronym`
 2. 对象转换必须使用手动setter方式，禁止使用PojoUtil.copy()
-3. 每个阶段完成后必须更新backend-code-gen.md跟踪文件
+3. 每个阶段完成后必须更新backend-code-gen-tracker.md跟踪文件
 
 ## 其他规范引用
 
@@ -174,22 +206,7 @@ END IF
 ### API 开发规范
 > 请参考：[后端命名和编码规范工具指南](../../cds-product-design-zh/references/BACKEND-TOOLS-NAMING.md)
 
-### 响应结果格式
-```json
-// 成功响应
-{
-    "code": 100000000,
-    "message": "操作成功",
-    "data": {...}
-}
 
-// 失败响应
-{
-    "code": 500000000,
-    "message": "系统异常",
-    "data": null
-}
-```
 
 ### 代码质量保证
 > 详细规范请参考各阶段生成指南文档，已包含编码规范、命名规范、事务管理等内容。
@@ -239,5 +256,5 @@ END IF
 
 1. **阶段1-4**：必选，按顺序执行
 2. **阶段5-9**：可选，根据用户需求选择执行
-3. 每个阶段完成后必须更新backend-code-gen.md
+3. 每个阶段完成后必须更新backend-code-gen-tracker.md
 4. 所有详细模板和规范请参考对应的阶段文档

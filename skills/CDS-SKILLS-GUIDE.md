@@ -16,19 +16,17 @@
 ## 技能列表
 
 ### 1. cds-product-design-zh (产品设计)
-**功能：** 根据需求概设整理需求输出需求详设，包括根据已有UI库生成UI稿，前端架构师生成前端技术实现方案，后端架构师生成后端技术实现方案。
+**功能：** 根据需求概要文档进行页面功能级别设计，输出需求详细设计、UI稿、前端架构设计资料和后端架构设计资料。
 
 **主要流程：**
-- 需求分析整理
-- 功能架构设计
-- UI库适配与组件准备
-- 模块功能清单确认
-- 模块数据架构设计
-- 模块业务流程设计
+- 需求概要文档确认
+- 需求详细设计
+- 数据架构设计
+- 业务流程设计
 - UI稿生成
-- 前端技术方案设计
-- 后端技术方案设计
-- 技术方案调整与同步
+- 前端架构设计
+- 后端架构设计
+- 设计验收检查
 
 **使用方法：** `/cds-product-design-zh`
 
@@ -36,30 +34,19 @@
 **功能：** 依据已有的UI稿和前端技术实现方案生成前端代码，依据已有的后端技术实现方案实现后端代码，生成启动类代码，包含git提交管理方便回退代码与模块集成能力。
 
 **主要流程：**
-- 开发环境初始化
-- 项目结构创建
-- 开发环境配置
-- 前端代码生成
-- 后端代码生成
-- 启动类代码生成
+- 模块开发初始化
+- 前端开发（项目结构创建、代码生成）
+- 后端开发（项目结构创建、代码生成、启动类代码生成）
 - 模块集成测试
 
 **使用方法：** `/cds-product-develop-zh`
 
 ### 3. cds-product-test-zh (产品测试)
-**功能：** 依据已有的代码结构编译启动前端资源，依据已有的后端代码结构编译启动后端项目，需要配置已经安装了codelink的环境信息或者（nacos地址、数据库地址、国际化服务地址、如有需要redis地址、kafka地址）。
+**功能：** 负责设计阶段检查验收、原型检查、测试用例生成，以及开发阶段测试执行、集成测试和项目验收。同时支持代码编译启动测试。
 
 **主要流程：**
-- 测试环境初始化
-- 环境依赖配置
-- 测试工具安装
-- 前端编译测试
-- 后端编译测试
-- 前端启动测试
-- 后端启动测试
-- 集成启动测试
-- 功能测试执行
-- 性能测试执行
+- 设计阶段检查验收（全局设计检查、模块设计检查、PRD测试用例检查、原型检查监督）
+- 开发阶段测试执行（模块测试执行、集成测试执行、项目验收）
 
 **使用方法：** `/cds-product-test-zh`
 
@@ -67,17 +54,8 @@
 **功能：** 依据已有的项目结构编译构建，通过之后打包代码，压缩之后调用cds接口上传，成功之后触发远程构建安装启动，webhook方式通知企微机器人。
 
 **主要流程：**
-- 运维环境初始化
-- 构建环境配置
-- 部署环境配置
-- 通知系统配置
-- 项目编译构建
-- 代码打包压缩
-- CDS接口上传
-- 远程构建触发
-- 远程安装启动
-- 企微通知发送
-- 部署结果验证
+- 运维环境准备（运维环境初始化、构建环境配置、部署环境配置、通知系统配置）
+- 模块部署（模块部署初始化、项目编译构建、代码打包压缩、CDS接口上传、远程构建触发、远程安装启动、企微通知发送、部署结果验证）
 
 **使用方法：** `/cds-product-devops-zh`
 
@@ -106,6 +84,111 @@
 - 前端代码生成依赖 UI 稿、UI 规范、前端架构设计
 - 后端代码生成依赖需求详细设计、后端架构设计、API 设计文档
 - 若关键输入缺失，需先确认是否允许合理发挥
+
+### 2.1 前端代码生成控制逻辑（7阶段流程）
+
+前端代码生成采用**7阶段流程控制机制**，支持断点续传和状态跟踪：
+
+**阶段划分**：
+1. **阶段1：类型定义和工具函数生成**（必选）
+   - 生成 TypeScript 类型定义文件
+   - 生成通用工具函数
+   - 交付物：`src/types/{模块名}.ts`、`src/utils/{功能}.ts`
+
+2. **阶段2：API 服务层生成**（必选）
+   - 根据 API 设计文档生成 API 模块
+   - 使用 `/msService/{moduleCode}/...` 路径格式
+   - 交付物：`src/api/modules/{模块名}.ts`
+
+3. **阶段3：业务组件生成**（必选）
+   - 根据前端架构设计识别可复用组件
+   - 生成业务组件文件和样式
+   - 交付物：`src/components/{组件名}/index.tsx`
+
+4. **阶段4：页面组件生成**（必选）
+   - 根据 UI 原型和需求文档生成页面
+   - 集成业务组件和 API 服务
+   - 交付物：`src/pages/{模块名}/{页面名}.tsx`
+
+5. **阶段5：路由配置生成**（可选）
+   - 配置路由懒加载和路由守卫
+   - 交付物：`src/routes/index.tsx`
+
+6. **阶段6：国际化资源生成**（可选）
+   - 提取文案并生成多语言资源文件
+   - 交付物：`src/locales/zh-CN.ts`、`src/locales/en-US.ts`
+
+7. **阶段7：样式文件生成**（可选）
+   - 生成全局样式和主题配置
+   - 交付物：`src/assets/styles/global.less`
+
+**控制机制**：
+- **跟踪文件**：`frontend-code-gen-tracker.md`（项目根目录）
+- **断点续传**：每个阶段完成后更新跟踪文件，中断后可从任意阶段恢复
+- **前序产物检查**：开始前必须检查设计文档完整性，至少需要 `{功能名称}-需求详细设计.md`
+- **阶段顺序**：必须按 1→2→3→4 顺序执行，5→6→7 为可选阶段
+- **用户确认**：每个阶段完成后展示生成文件清单，获取确认后继续
+
+### 2.2 后端代码生成控制逻辑（9阶段流程）
+
+后端代码生成采用**9阶段流程控制机制**，支持断点续传和按需生成：
+
+**阶段划分**：
+1. **阶段1：VO、BO和Entity生成**（必选）
+   - 生成 Entity 类（原生 MyBatis-Plus 实现）
+   - 生成 BO 类和 VO 类
+   - 交付物：`Custom{ModuleCode}{ModelCode}Entity.java`、`BO.java`、`VO.java`
+
+2. **阶段2：Controller生成**（必选）
+   - 根据 API 设计文档生成 Controller
+   - 实现对象转换（手动 setter 方式）
+   - 交付物：`Custom{ModuleCode}{ModelCode}Controller.java`
+
+3. **阶段3：Service和ServiceImpl生成**（必选）
+   - 生成 Service 接口（继承 IService）
+   - 生成 ServiceImpl 实现类
+   - 实现业务方法（saveBO、info、delete 等）
+   - 交付物：`Custom{ModuleCode}{ModelCode}Service.java`、`ServiceImpl.java`
+
+4. **阶段4：Dao和Mapper生成**（必选）
+   - 生成 Dao 接口（继承 BaseMapper）
+   - 生成 Mapper XML 文件（如需要）
+   - 交付物：`Custom{ModuleCode}{ModelCode}Dao.java`、`Mapper.xml`
+
+5. **阶段5：初始化SQL生成**（可选）
+   - 根据 Entity 生成建表 SQL
+   - 支持多种数据库：Oracle（默认）、SQL Server、MariaDB、DM（达梦）
+   - 交付物：`init_{moduleCode}_{modelCode}.sql`
+
+6. **阶段6：Feign API接口生成**（可选）
+   - 生成跨服务调用接口
+   - 生成 DTO 对象
+   - 交付物：`Custom{ModuleCode}{ModelCode}Api.java`、`DTO.java`
+
+7. **阶段7：启动类代码生成**（可选）
+   - 生成 Bootstrap 启动类
+   - 配置 bootstrap.properties
+   - 交付物：`Bootstrap.java`、`bootstrap.properties`
+
+8. **阶段8：菜单注册配置生成**（可选）
+   - 生成 ModuleRegisterInitialize
+   - 生成菜单注册 SQL
+   - 交付物：`{ModuleCode}ModuleRegisterInitialize.java`、`menu_init_{moduleCode}.sql`
+
+9. **阶段9：依赖注入配置生成**（可选）
+   - 生成 PubServiceConfiguration 配置类
+   - 配置 @EnableFeignClients 和 @MapperScan 包扫描
+   - 交付物：`{ModuleCode}PubServiceConfiguration.java`
+
+**控制机制**：
+- **跟踪文件**：`backend-code-gen-tracker.md`（项目根目录）
+- **断点续传**：每个阶段完成后更新跟踪文件，中断后可从任意阶段恢复
+- **可选功能确认**：开始前必须向用户确认阶段5-9是否需要生成
+- **前序产物检查**：开始前必须检查设计文档，至少需要 `{功能名称}-需求详细设计.md`
+- **关键标识确认**：必须确认 `moduleCode` 和 `acronym`（从文档或 metadata 提取后需用户确认）
+- **阶段顺序**：必须按 1→2→3→4 顺序执行，5→6→7→8→9 为可选阶段
+- **用户确认**：每个阶段完成后展示生成文件清单，获取确认后继续
+- **对象转换规范**：所有阶段都必须使用手动 setter 方式，禁止使用工具类拷贝
 
 #### 3. 测试负责独立验收与问题回流
 测试阶段既检查设计，也检查代码与运行结果：
@@ -139,8 +222,17 @@
 | `cds-product-design-zh` | 需求详细设计 | `cds-product-develop-zh` / `cds-product-test-zh` | 作为实现与验收依据 |
 | `cds-product-design-zh` | UI 稿、前端架构设计 | `cds-product-develop-zh` | 作为前端开发输入 |
 | `cds-product-design-zh` | 后端架构设计、API 设计文档 | `cds-product-develop-zh` / `cds-product-test-zh` | 作为后端实现与接口验证依据 |
-| `cds-product-develop-zh` | 前后端代码、启动类、集成产物 | `cds-product-test-zh` / `cds-product-devops-zh` | 作为测试和部署输入 |
-| `cds-product-test-zh` | 测试报告、验收报告 | `cds-product-develop-zh` / `cds-product-devops-zh` | 作为修复或上线依据 |
+| `cds-product-develop-zh` | 前端代码（类型定义、API服务、组件、页面） | `cds-product-test-zh` / `cds-product-devops-zh` | 作为前端测试和部署输入 |
+| `cds-product-develop-zh` | 后端代码（Entity、Controller、Service、DAO） | `cds-product-test-zh` / `cds-product-devops-zh` | 作为后端测试和部署输入 |
+| `cds-product-develop-zh` | 启动类代码、配置文件 | `cds-product-test-zh` / `cds-product-devops-zh` | 作为应用启动入口 |
+| `cds-product-develop-zh` | 模块集成产物 | `cds-product-test-zh` | 作为模块集成测试输入 |
+| `cds-product-test-zh` | 全局设计检查报告 | `cds-product-design-zh` | 作为设计产物改进依据 |
+| `cds-product-test-zh` | 模块设计检查报告 | `cds-product-design-zh` | 作为模块设计改进依据 |
+| `cds-product-test-zh` | PRD测试用例检查报告 | `cds-product-design-zh` | 作为测试用例完善依据 |
+| `cds-product-test-zh` | 原型检查报告 | `cds-product-design-zh` | 作为原型优化依据 |
+| `cds-product-test-zh` | 模块测试报告 | `cds-product-develop-zh` | 作为模块代码修复依据 |
+| `cds-product-test-zh` | 集成测试报告 | `cds-product-develop-zh` | 作为集成问题修复依据 |
+| `cds-product-test-zh` | 验收报告 | `cds-product-devops-zh` | 作为上线部署依据 |
 | `cds-product-devops-zh` | 构建记录、部署结果、通知记录 | 用户 / `cds-product-test-zh` | 作为上线结果和回溯依据 |
 
 ### 状态管理机制
@@ -189,7 +281,9 @@ skill-name/
 ├── SKILL.md              # 技能主文档
 └── references/           # 参考文档目录
     ├── TASK-MANAGEMENT.md    # 任务管理指南
-    ├── ENV-CONFIG.md         # 环境配置指南
+    ├── DESIGN-FLOW.md        # 设计流程指南
+    ├── FRONTEND-IMPL.md      # 前端实现指南
+    ├── BACKEND-IMPL.md       # 后端实现指南
     └── ...                   # 其他详细指南
 ```
 

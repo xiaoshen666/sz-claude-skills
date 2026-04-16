@@ -46,7 +46,7 @@ END IF
 
 | 选项 | 包含步骤 | 名称 | 详细指南 | 核心交付物 |
 |------|---------|------|---------|-----------|
-| **A** | 步骤1+2 | 前端开发 | references/FRONTEND-MODULE-STRUCT-RULES.md + FRONTEND-IMPL.md | 前端项目结构、前端组件代码、前端服务代码、前端路由配置 |
+| **A** | 步骤1+2 | 前端开发 | references/FRONTEND-MODULE-STRUCT-RULES.md + FRONTEND-IMPL.md（含FRONTEND-CODE-GEN.md流程控制） | 前端项目结构、前端组件代码、前端服务代码、前端路由配置 |
 | **B** | 步骤3+4+5 | 后端开发 | references/BACKEND-MODULE-STRUCT-RULES.md + BACKEND-IMPL.md（含BACKEND-CODE-GEN.md流程控制） + ../cds-product-design-zh/references/BACKEND-TOOLS-BOOTSTRAP.md | 后端项目结构、后端Controller/Service/DAO代码、启动类代码（按需） |
 | **C** | 步骤6 | 模块集成测试 | INTEGRATION.md | 集成测试报告、模块开发完成确认 |
 
@@ -56,9 +56,9 @@ END IF
 |---------|---------|---------|---------|  
 | 步骤0 | 模块开发初始化 | 创建dev-task.md，确认模块信息和目录位置 | 必选 |
 | 步骤1 | 前端项目结构创建 | 创建前端目录结构、基础配置文件 | 选项A |
-| 步骤2 | 前端代码生成 | 生成前端组件、服务、路由代码 | 选项A |
+| 步骤2 | 前端代码生成 | 生成前端组件、服务、路由代码（按FRONTEND-CODE-GEN.md的7阶段流程） | 选项A |
 | 步骤3 | 后端项目结构创建 | 创建后端目录结构、包结构 | 选项B |
-| 步骤4 | 后端代码生成 | 生成后端Controller、Service、DAO代码 | 选项B |
+| 步骤4 | 后端代码生成 | 生成后端Controller、Service、DAO代码（按BACKEND-CODE-GEN.md的9阶段流程） | 选项B |
 | 步骤5 | 启动类代码生成 | 按需生成启动类、配置文件、依赖注入配置 | 选项B |
 | 步骤6 | 模块集成测试 | 前后端集成测试、功能验证 | 选项C |
 
@@ -108,6 +108,68 @@ END IF
 5. **上下文清理**：移除与当前步骤无关的历史对话，仅保留关键结论到进度文件
 
 > **详细上下文清理规范请参考**: [上下文清理规范](references/CONTEXT-CLEANING.md)
+
+## 文档调用关系说明
+
+### 前端文档调用链
+
+```
+SKILL.md (步骤2：前端代码生成)
+    ↓ 触发
+FRONTEND-IMPL.md (前端代码实现指南)
+    ↓ 内部调用
+FRONTEND-CODE-GEN.md (前端代码生成流程控制 - 7阶段)
+    ↓ 每个阶段调用对应的生成指南
+    ├─ 阶段1: FRONTEND-TYPES-UTILS-GENERATION.md
+    ├─ 阶段2: FRONTEND-API-SERVICE-GENERATION.md
+    ├─ 阶段3: FRONTEND-COMPONENT-GENERATION.md
+    ├─ 阶段4: FRONTEND-PAGE-GENERATION.md
+    ├─ 阶段5: FRONTEND-ROUTE-GENERATION.md (可选)
+    ├─ 阶段6: FRONTEND-I18N-GENERATION.md (可选)
+    └─ 阶段7: FRONTEND-STYLES-GENERATION.md (可选)
+    ↓ 每个阶段完成后更新
+frontend-code-gen-tracker.md (项目根目录的跟踪文件)
+```
+
+### 后端文档调用链
+
+```
+SKILL.md (步骤4：后端代码生成)
+    ↓ 触发
+BACKEND-IMPL.md (后端工程师角色实现指南)
+    ↓ 内部调用
+BACKEND-CODE-GEN.md (后端代码生成流程控制 - 9阶段)
+    ↓ 每个阶段调用对应的生成指南
+    ├─ 阶段1: BACKEND-ENTITY-BO-VO-GENERATION.md
+    ├─ 阶段2: BACKEND-CONTROLLER-GENERATION.md
+    ├─ 阶段3: BACKEND-SERVICE-GENERATION.md
+    ├─ 阶段4: BACKEND-DAO-MAPPER-GENERATION.md
+    ├─ 阶段5: BACKEND-INIT-SQL-GENERATION.md (可选)
+    ├─ 阶段6: BACKEND-FEIGN-API-GENERATION.md (可选)
+    ├─ 阶段7: BACKEND-TOOLS-BOOTSTRAP.md (可选)
+    ├─ 阶段8: BACKEND-TOOLS-MODULE-REGISTER.md (可选)
+    └─ 阶段9: BACKEND-TOOLS-CONFIGURATION.md (可选)
+    ↓ 每个阶段完成后更新
+backend-code-gen-tracker.md (项目根目录的跟踪文件)
+```
+
+### 关键说明
+
+1. **IMPL.md 是入口文档**：
+   - FRONTEND-IMPL.md 和 BACKEND-IMPL.md 是 SKILL.md 直接调用的入口
+   - 它们定义了角色定位、技术栈、开发规范等基础信息
+
+2. **CODE-GEN.md 是流程控制文档**：
+   - FRONTEND-CODE-GEN.md 和 BACKEND-CODE-GEN.md 被 IMPL.md 内部调用
+   - 它们定义了阶段化的执行流程、断点续传机制、跟踪文件更新规则
+
+3. **跟踪文件在项目根目录**：
+   - `frontend-code-gen-tracker.md` 和 `backend-code-gen-tracker.md` 创建在项目根目录
+   - 不在 references 目录中，便于跨会话恢复
+
+4. **阶段生成指南在 references 目录**：
+   - 各阶段的具体生成指南（如 BACKEND-ENTITY-BO-VO-GENERATION.md）在 references 目录
+   - 由 CODE-GEN.md 按阶段调用
 
 
 
