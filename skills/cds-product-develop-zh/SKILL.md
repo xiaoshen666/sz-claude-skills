@@ -63,10 +63,13 @@ END IF
    用户可以选择其中任意一项、多项，或明确说明这三项都不需要；只有在用户确认需要的前提下，才生成对应内容
 
 ### 每个步骤执行后
-1. **更新进度文件**：立即更新 dev-session.md 或 dev-task.md
+1. **更新进度文件**：立即更新 dev-session.md 或 dev-task.md，仅保留关键结论
 2. **git提交**：完成代码后立即git提交，记录清晰的提交信息
-3. **记录执行摘要**：记录关键决策、变更、用户确认
+3. **记录执行摘要**：记录关键决策、变更、用户确认（压缩为摘要）
 4. **用户确认**：展示产物，获取用户确认后继续
+5. **上下文清理**：移除与当前步骤无关的历史对话，仅保留关键结论到进度文件
+
+> **详细上下文清理规范请参考**: [上下文清理规范](references/CONTEXT-CLEANING.md)
 
 
 
@@ -81,6 +84,8 @@ END IF
 
 ## 开发者能力文档
 
+> **详细能力说明请参考**: [开发原则与工具指南](references/DEVELOP-PRINCIPLES.md#开发者能力文档)
+
 ### 前端开发能力
 | 文件 | 用途 |
 |------|------|
@@ -93,6 +98,8 @@ END IF
 
 ### 工具文档引用
 
+> **详细工具文档请参考**: [开发原则与工具指南](references/DEVELOP-PRINCIPLES.md#工具文档引用)
+
 #### 后端开发工具指南
 | 工具文档 | 用途 | 使用场景 |
 |---------|------|----------|
@@ -101,8 +108,6 @@ END IF
 | [配置管理工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-CONFIGURATION.md) | 公共服务配置和模块配置 | 配置类开发、包扫描配置时 |
 | [数据库规范工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-DATABASE.md) | 数据库设计和SQL脚本规范 | 数据库设计、表结构创建时 |
 | [模块注册工具指南](../cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md) | 模块注册、菜单注册、工作流注册 | 模块初始化、系统集成时 |
-
-> **说明**: 后端业务代码模板已从实现指南中抽离到 `cds-product-develop-zh/references/BACKEND-TOOLS-CODE-GENERATION.md`，供开发阶段直接引用。模块注册、菜单注册、工作流注册等设计仍然保留在 `cds-product-design-zh/references/BACKEND-TOOLS-MODULE-REGISTER.md` 中，供需要注册代码时引用。
 
 ## 外部Skill调用
 
