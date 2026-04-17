@@ -31,7 +31,7 @@
 
 ## dev-task.md 格式规范
 
-```markdown
+```
 # 模块开发任务单
 
 ## 基本信息
@@ -173,32 +173,36 @@
 - ✅ 已完成：任务已完成
 - ❌ 已取消：任务已取消（需说明原因）
 
-## 与 dev-session.md 的关系
+## 与 dev-session.md 关系
 
 ### 职责区分
 
-- **dev-session.md**：记录整个开发会话的全局状态和进度
-- **dev-task.md**：记录当前具体模块的开发任务和详细信息
+> 💡 **重要变更**：dev-task.md、frontend-code-gen-tracker.md、backend-code-gen-tracker.md 已合并到统一的 **dev-session.md** 中。
 
-### 同步机制
-
-1. 当开始新模块开发时，从 dev-session.md 读取全局配置信息
-2. 在 dev-task.md 中记录模块级别的详细信息
-3. 模块开发完成后，将结果同步回 dev-session.md
+- **dev-session.md**：唯一的进度跟踪文件，包含全局会话信息、模块信息、前端/后端开发进度、下次恢复指南
 
 ### 信息流转
 
 ```
-dev-session.md (全局配置)
+开始模块开发
     ↓
-dev-task.md (模块任务)
+创建/更新 dev-session.md（统一跟踪）
     ↓
 执行开发步骤
     ↓
-更新 dev-task.md
+更新 dev-session.md 中的对应进度
     ↓
-同步到 dev-session.md
+清理上下文后，从 dev-session.md 快速恢复
 ```
+
+### 优势
+
+- ✅ 文件数量：4个 → 1个（减少75%）
+- ✅ 维护成本：只需更新1个文件
+- ✅ Token消耗：大幅减少
+- ✅ 恢复效率：所有信息在一个文件中
+
+**详细格式规范请参考**: [DEV-SESSION-FORMAT.md](DEV-SESSION-FORMAT.md)
 
 ## 标准初始化话术
 
