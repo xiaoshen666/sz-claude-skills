@@ -50,6 +50,8 @@ FRONTEND-CODE-GEN.md (前端代码生成流程控制 - 7阶段)
     ├─ 阶段5: FRONTEND-ROUTE-GENERATION.md (路由配置 - 可选)
     ├─ 阶段6: FRONTEND-I18N-GENERATION.md (国际化资源 - 可选)
     └─ 阶段7: FRONTEND-STYLES-GENERATION.md (样式文件 - 可选)
+    ↓ 每个阶段完成后更新
+    dev-session.md (统一的进度跟踪文件)
 ```
 
 ## 开发规范
@@ -216,7 +218,8 @@ FRONTEND-CODE-GEN.md (前端代码生成流程控制 - 7阶段)
 前端代码生成完成后，将进行：
 1. **基础验证**：进行必要的代码质量与构建检查
 2. **Git 提交**：将代码提交到版本控制系统
-3. **生成前端功能运行说明文档**：在 `{moduleCode}-frontend/` 目录下创建 `README.md` 或 `功能运行说明.md`
-4. **后端开发**：开始后端代码生成
+3. **更新进度文件**：更新 dev-session.md 的「前端开发进度」部分
+4. **生成前端功能运行说明文档**：在 `{moduleCode}-frontend/` 目录下创建 `README.md` 或 `功能运行说明.md`
+5. **后端开发**：开始后端代码生成
 
 > **详细的后续步骤和阶段完成后的操作规范请参考**: [前端代码生成流程控制 - 阶段执行规范](FRONTEND-CODE-GEN.md#阶段执行规范)

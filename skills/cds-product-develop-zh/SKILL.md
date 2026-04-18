@@ -132,7 +132,7 @@ FRONTEND-CODE-GEN.md (前端代码生成流程控制 - 7阶段)
     ├─ 阶段6: FRONTEND-I18N-GENERATION.md (可选)
     └─ 阶段7: FRONTEND-STYLES-GENERATION.md (可选)
     ↓ 每个阶段完成后更新
-frontend-code-gen-tracker.md (项目根目录的跟踪文件)
+dev-session.md (统一的进度跟踪文件)
 ```
 
 ### 后端文档调用链
@@ -154,7 +154,7 @@ BACKEND-CODE-GEN.md (后端代码生成流程控制 - 9阶段)
     ├─ 阶段8: BACKEND-TOOLS-MODULE-REGISTER.md (可选)
     └─ 阶段9: BACKEND-TOOLS-CONFIGURATION.md (可选)
     ↓ 每个阶段完成后更新
-backend-code-gen-tracker.md (项目根目录的跟踪文件)
+dev-session.md (统一的进度跟踪文件)
 ```
 
 ### 关键说明
