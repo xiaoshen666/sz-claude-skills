@@ -103,8 +103,9 @@
 │   │   └── user.ts          # 用户相关类型
 │   ├── utils/               # 工具函数
 │   │   └── format.ts        # 格式化工具
-│   ├── App.tsx              # 应用根组件
+│   ├── App.tsx              # 应用根组件  必须使用 HashRouter 不使用 BrowserRouter
 │   └── main.tsx             # 应用入口
+├── vite.config.ts           # Vite 配置（必须包含 base 和 proxy）
 ├── .eslintrc.js             # ESLint 配置
 ├── .prettierrc              # Prettier 配置
 ├── tsconfig.json            # TypeScript 配置
@@ -199,6 +200,85 @@
 2. **模糊匹配**：部分匹配功能名称或模块编码
 3. **默认位置**：在标准目录下查找
 4. **手动创建**：若未找到，则按规范创建
+
+
+## 系统适配要求（重要）
+
+### Vite 配置规范
+
+生成的前端项目必须遵循以下 Vite 配置：
+
+#### vite.config.ts 标准配置
+```typescript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  // ⚠️ 重要：基础路径必须遵循此格式
+  base: '/nebule-custom-static/{moduleCode}/',
+  plugins: [react()],
+  server: {
+    port: 5173,
+    proxy: {
+      '/msService': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        rewrite: (path) => path,  // 保持路径不变
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('[Proxy]', req.method, req.url, '->', options.target + proxyReq.path);
+          });
+          proxy.on('proxyRes', (proxyRes, req, res) => {
+            console.log('[Proxy Response]', proxyRes.statusCode, req.url);
+          });
+        }
+      }
+    }
+  },
+  css: {
+    preprocessorOptions: {
+      less: {
+        javascriptEnabled: true,
+      }
+    }
+  }
+})
+```
+
+**关键配置说明**：
+1. **base 路径**：必须为 `/nebule-custom-static/{moduleCode}/`，其中 `{moduleCode}` 替换为实际模块编码
+2. **代理配置**：必须配置 `/msService` 代理到后端服务
+3. **CSS 预处理器**：必须使用 LESS，并启用 `javascriptEnabled`
+
+### 项目目录结构
+
+```
+{moduleCode}-frontend/
+├── vite.config.ts              # Vite 配置（必须包含 base 和 proxy）
+├── package.json
+├── tsconfig.json
+├── src/
+│   ├── App.tsx                 # 应用入口（使用 HashRouter）
+│   ├── main.tsx                # 挂载点
+│   ├── pages/                  # 页面组件
+│   │   └── {ModuleName}/
+│   │       ├── index.tsx
+│   │       └── index.module.less
+│   ├── components/             # 业务组件
+│   │   └── {ComponentName}/
+│   │       ├── index.tsx
+│   │       └── index.module.less
+│   ├── api/                    # API 服务层
+│   │   └── modules/
+│   │       └── {moduleCode}.ts
+│   ├── types/                  # TypeScript 类型定义
+│   │   └── {moduleCode}.ts
+│   └── utils/                  # 工具函数
+└── ...
+```
+
+---
 
 ## 验证规则
 

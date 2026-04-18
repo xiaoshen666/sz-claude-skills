@@ -4,6 +4,77 @@
 
 本文档定义前端路由配置的生成规范。
 
+### 路由配置规范
+
+#### App.tsx 标准结构
+```typescript
+import React from 'react'
+import { HashRouter as Router, Routes, Route } from 'react-router-dom'
+import {ModuleName} from './pages/{ModuleName}'
+
+const App: React.FC = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<{ModuleName} />} />
+        <Route path="/{modulePath}" element={<{ModuleName} />} />
+      </Routes>
+    </Router>
+  )
+}
+
+export default App
+```
+
+**关键规则**：
+1. **必须使用 HashRouter**：不使用 BrowserRouter
+2. **路由路径**：根路径 `/` 和模块路径 `/{modulePath}` 都指向主页面组件
+3. **组件命名**：页面组件放在 `./pages/{ModuleName}` 目录下
+
+### API 请求路径规范
+
+所有 API 请求必须使用 `/msService/{moduleCode}/...` 格式：
+
+```typescript
+// ✅ 正确示例
+const API_BASE = '/msService/employeemgmt'
+export const getEmployeeList = () => axios.get(`${API_BASE}/employee/list`)
+
+// ❌ 错误示例（禁止使用）
+const API_BASE = '/inter-api/employeemgmt'  // 历史路径，禁止使用
+const API_BASE = '/api/employeemgmt'        // 缺少 msService 前缀
+```
+
+### 项目目录结构
+
+```
+{moduleCode}-frontend/
+├── vite.config.ts              # Vite 配置（必须包含 base 和 proxy）
+├── package.json
+├── tsconfig.json
+├── src/
+│   ├── App.tsx                 # 应用入口（使用 HashRouter）
+│   ├── main.tsx                # 挂载点
+│   ├── pages/                  # 页面组件
+│   │   └── {ModuleName}/
+│   │       ├── index.tsx
+│   │       └── index.module.less
+│   ├── components/             # 业务组件
+│   │   └── {ComponentName}/
+│   │       ├── index.tsx
+│   │       └── index.module.less
+│   ├── api/                    # API 服务层
+│   │   └── modules/
+│   │       └── {moduleCode}.ts
+│   ├── types/                  # TypeScript 类型定义
+│   │   └── {moduleCode}.ts
+│   └── utils/                  # 工具函数
+└── ...
+```
+
+---
+
+
 ## 路由配置结构
 
 ```tsx

@@ -4,6 +4,15 @@
 
 本文档定义前端代码生成的完整流程控制机制，支持断点续传和状态跟踪。
 
+> ⚠️ **重要：系统适配要求**
+> 
+> 生成的前端代码必须适配 SupOS 平台规范，包括：
+> - Vite 配置的 base 路径：`/nebule-custom-static/{moduleCode}/`
+> - 路由使用 HashRouter
+> - API 请求路径：`/msService/{moduleCode}/...`
+> 
+> **详细系统适配规则请参考**: [FRONTEND-IMPL.md - 系统适配要求](FRONTEND-IMPL.md#系统适配要求重要)
+
 ## 使用前提
 
 在生成具体业务代码前，优先结合以下输入一起使用：
@@ -193,6 +202,11 @@ END IF
 2. **加载指南**：读取对应的生成指南文件
 3. **确认前置产物**：检查前置阶段的交付物是否存在
 4. **确认关键标识**：确认 moduleCode
+5. **⚠️ 系统适配检查**：确保生成代码符合以下规范：
+   - Vite base 路径：`/nebule-custom-static/{moduleCode}/`
+   - 路由使用 HashRouter（不是 BrowserRouter）
+   - API 请求路径：`/msService/{moduleCode}/...`
+   - CSS 预处理器：使用 LESS
 
 ### 每个阶段执行后（必须严格执行 - 强制清理机制）
 
