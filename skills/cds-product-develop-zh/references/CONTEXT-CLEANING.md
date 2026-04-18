@@ -20,9 +20,6 @@
 ## 进度文件格式
 
 **进度文件**：`dev-session.md`（统一跟踪文件）
-
-> 💡 **说明**：已合并 dev-task.md、frontend-code-gen-tracker.md、backend-code-gen-tracker.md 到统一的 dev-session.md 中，减少文件冗余，降低维护成本。
-> 
 > **详细格式规范请参考**: [DEV-SESSION-FORMAT.md](DEV-SESSION-FORMAT.md)
 
 **保留内容**：

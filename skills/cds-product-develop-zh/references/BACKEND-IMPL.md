@@ -247,8 +247,7 @@ BACKEND-CODE-GEN.md (9阶段流程控制)
 | 阶段 | 文档 | 用途 |
 |------|------|------|
 | 流程控制 | [BACKEND-CODE-GEN.md](BACKEND-CODE-GEN.md) | 后端代码生成流程控制和断点续传 |
-| 进度跟踪 | [dev-session.md](../../dev-session.md) | 统一的进度跟踪文件（项目根目录） |
-| 格式规范 | [DEV-SESSION-FORMAT.md](../../DEV-SESSION-FORMAT.md) | dev-session.md格式规范 |
+| 格式规范 | [DEV-SESSION-FORMAT.md](DEV-SESSION-FORMAT.md) | dev-session.md格式规范 |
 | 阶段1 | [BACKEND-ENTITY-BO-VO-GENERATION.md](BACKEND-ENTITY-BO-VO-GENERATION.md) | Entity、BO、VO生成 |
 | 阶段2 | [BACKEND-CONTROLLER-GENERATION.md](BACKEND-CONTROLLER-GENERATION.md) | Controller生成 |
 | 阶段3 | [BACKEND-SERVICE-GENERATION.md](BACKEND-SERVICE-GENERATION.md) | Service和ServiceImpl生成 |

@@ -4,8 +4,6 @@
 
 `dev-session.md` 是**唯一的进度跟踪文件**，用于统一跟踪模块开发进度、记录关键信息和协调前后端开发工作。
 
-> 💡 **重要变更**：原有的 dev-task.md、frontend-code-gen-tracker.md、backend-code-gen-tracker.md 已合并到统一的 **dev-session.md** 中。
-
 ## 文件位置
 
 - **位置**：项目根目录或模块目录下
@@ -278,14 +276,3 @@
 - **下一阶段**：阶段2 - API服务层
 - **需要读取的指南**：`FRONTEND-API-SERVICE-GENERATION.md`
 ```
-
-## 迁移指南
-
-从旧的跟踪文件迁移到 dev-session.md：
-
-1. **合并信息**：将 dev-task.md、frontend-code-gen-tracker.md、backend-code-gen-tracker.md 的信息合并到 dev-session.md
-2. **更新格式**：按照新的格式规范重新组织内容
-3. **验证完整性**：确保所有关键信息都已迁移
-4. **删除旧文件**：确认新文件正常后删除旧文件
-
-**详细迁移步骤请参考**: [MIGRATION-GUIDE.md](MIGRATION-GUIDE.md)

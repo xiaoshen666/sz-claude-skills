@@ -4,8 +4,6 @@
 
 本指南定义了模块开发初始化的流程。初始化时会创建/更新 `dev-session.md` 文件，该文件是**唯一的进度跟踪文件**，用于跟踪模块开发进度、记录关键信息和协调前后端开发工作。
 
-> 💡 **重要变更**：原有的 dev-task.md、frontend-code-gen-tracker.md、backend-code-gen-tracker.md 已合并到统一的 **dev-session.md** 中。
-
 ## 初始化流程
 
 ### 步骤1：创建/更新 dev-session.md
